@@ -21,7 +21,7 @@
         <!-- Money Generator -->
         <section style="display: none" data-bind="visible: currentPanel() == 'MoneyGenerator'">
             <h1 class="content_title">Generate Money</h1>
-            <div class="content_display-cash" data-bind="text: 'Balance: ' + $root.bank().balancePreview()"></div>
+            <div class="content_display-cash" data-bind="text: 'Balance: ' + $root.player().bank().balancePreview()"></div>
             <!-- Money Generator (Clicker) -->
             <div class="clicker" data-bind="with: moneyGenerator">
                 <div class="clicker_field">
@@ -65,7 +65,7 @@
         <!-- Stock Portfolio -->
         <section style="display: none" data-bind="with: ticker, visible: currentPanel() == 'ViewStocks'">
             <h1 class="content_title">Stock Portfolio</h1>
-            <div class="content_display-cash" data-bind="text: 'Balance: ' + $root.bank().balancePreview()"></div>
+            <div class="content_display-cash" data-bind="text: 'Balance: ' + $root.player().bank().balancePreview()"></div>
         </section>
         <!-- Stock Exchange -->
         <section style="display: none"
@@ -73,7 +73,7 @@
             <!-- Buy Stocks (View All) -->
             <div style="display: none" data-bind="visible: selectedCompany() === null">
                 <h1 class="content_title">Buy Stocks</h1>
-                <div class="content_display-cash" data-bind="text: $root.bank().balancePreview"></div>
+                <div class="content_display-cash" data-bind="text: $root.player().bank().balancePreview"></div>
                 <ul class="stockexchange" data-bind="foreach: companies">
                     <li
                         data-bind="class: 'content_fill ' + (stockValueChange() >= 0 ? 'stockexchange_company' : 'stockexchange_company-negative')">
@@ -95,7 +95,7 @@
             <!-- Buy Stocks (Details) -->
             <div style="display: none" data-bind="visible: selectedCompany() !== null, with: selectedCompany">
                 <h1 class="content_title">Buy Stocks (Details)</h1>
-                <div class="content_display-cash" data-bind="text: 'Balance: ' + $root.bank().balancePreview()"></div>
+                <div class="content_display-cash" data-bind="text: 'Balance: ' + $root.player().bank().balancePreview()"></div>
                 <div class="stockexchange">
                     <div class="content_side-thirty">
                         <button class="stockexchange_button-link"
@@ -144,7 +144,7 @@
                     </div>
                     <div class="content_side-sixty stockexchange_row">
                         <!-- Cannot afford 1 stock -->
-                        <div style="display: none" data-bind="visible: $root.bank().balance() < stockValue()">
+                        <div style="display: none" data-bind="visible: $root.player().bank().balance() < stockValue()">
                             <div class="stockexchange_field">
                                 <label class="stockexchange_label-disabled">
                                     Amount
@@ -156,7 +156,7 @@
                             </div>
                         </div>
                         <!-- Can afford 1 stock -->
-                        <div style="display: none" data-bind="visible: $root.bank().balance() >= stockValue()">
+                        <div style="display: none" data-bind="visible: $root.player().bank().balance() >= stockValue()">
                             <div class="stockexchange_field">
                                 <label class="stockexchange_label">
                                     Amount
@@ -164,7 +164,7 @@
                                 </label>
                             </div>
                             <div class="stockexchange_field">
-                                <button data-bind="click: function() { $parent.tryPurchaseStocks(1) }, class: $root.bank().balance() >= $parent.priceToBuyStock() ? 'stockexchange_button-action' : 'stockexchange_button', text: $root.bank().balance() >= $parent.priceToBuyStock() ? 'Purchase ($' + $parent.priceToBuyStock().toFixed(2) + ')' : 'Cannot afford ($' + $parent.priceToBuyStock().toFixed(2) + ')'"></button>
+                                <button data-bind="click: function() { $parent.tryPurchaseStocks(1) }, class: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'stockexchange_button-action' : 'stockexchange_button', text: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'Purchase ($' + $parent.priceToBuyStock().toFixed(2) + ')' : 'Cannot afford ($' + $parent.priceToBuyStock().toFixed(2) + ')'"></button>
                             </div>
                         </div>
                     </div>
@@ -177,11 +177,12 @@
     <script src="Core/Scripts/Common/knockout.js"></script>
     <script src="Core/Scripts/Common/mathslibrary.js"></script>
     <script src="Core/Scripts/Common/gameconfig.js"></script>
-    <script src="Core/Scripts/Money/Bank.js"></script>
-    <script src="Core/Scripts/Money/MoneyGenerator.js"></script>
     <script src="Core/Scripts/Companies/StockExchange.js"></script>
     <script src="Core/Scripts/Companies/Company.js"></script>
     <script src="Core/Scripts/Companies/Ticker.js"></script>
+    <script src="Core/Scripts/Money/Bank.js"></script>
+    <script src="Core/Scripts/Money/MoneyGenerator.js"></script>
+    <script src="Core/Scripts/Player/Player.js"></script>
     <script src="Core/Scripts/PersistentStorage.js"></script>
     <script src="Core/Scripts/Game.js"></script>
 </body>

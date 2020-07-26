@@ -7,11 +7,11 @@ function MoneyGenerator() {
     var self = this;
 
     /**
-     * The bank holding the player's money
-     * @type {Bank}
+     * A reference to the current player
+     * @type {KnockoutObservable<Player>}
      * @instance
      */
-    this._bank = null;
+    this.player = ko.observable(null);
 
     /**
      * The amount of money that the player will receive without boosts
@@ -77,13 +77,13 @@ function MoneyGenerator() {
 
 /**
  * Creates a new MoneyGenerator
- * @param {Bank} bank - The bank holding the player's money
+ * @param {Player} player - A reference to the current player
  */
-MoneyGenerator.create = function (bank) {
+MoneyGenerator.create = function (player) {
 
     var moneyGenerator = new MoneyGenerator();
 
-    moneyGenerator._bank = bank;
+    moneyGenerator.player(player);
     moneyGenerator.baseCashPerClick(1);
     moneyGenerator.boostExpires(new Date(0));
 
@@ -93,10 +93,10 @@ MoneyGenerator.create = function (bank) {
 /**
  * Restores a money generator from JSON
  * @param {Object} savedMoneyGenerator - A JSON object representing the money generator
- * @param {Bank} bank - The bank holding the player's money
+ * @param {Player} player - A reference to the current player
  * @returns {MoneyGenerator}
  */
-MoneyGenerator.restore = function (savedMoneyGenerator, bank) {
+MoneyGenerator.restore = function (savedMoneyGenerator, player) {
 
     if (typeof (savedMoneyGenerator) === "undefined" || savedMoneyGenerator === null) {
 
@@ -105,7 +105,7 @@ MoneyGenerator.restore = function (savedMoneyGenerator, bank) {
 
     var moneyGenerator = new MoneyGenerator();
 
-    moneyGenerator._bank = bank;
+    moneyGenerator.player(player);
     moneyGenerator.baseCashPerClick(savedMoneyGenerator.baseCashPerClick);
     moneyGenerator.boostExpires(new Date(savedMoneyGenerator.boostExpires));
 
@@ -147,7 +147,7 @@ MoneyGenerator.prototype.getBoostCost = function (seconds) {
  */
 MoneyGenerator.prototype.boostGenerator = function (seconds) {
 
-    var isWithdrawalSuccess = this._bank.tryWithdraw(this.getBoostCost(seconds));
+    var isWithdrawalSuccess = this.player().bank().tryWithdraw(this.getBoostCost(seconds));
 
     if (!isWithdrawalSuccess) {
 
@@ -170,7 +170,7 @@ MoneyGenerator.prototype.boostGenerator = function (seconds) {
  */
 MoneyGenerator.prototype.generateCash = function () {
 
-    this._bank.deposit(this.cashPerClick())
+    this.player().bank().deposit(this.cashPerClick())
 }
 
 /**
@@ -179,7 +179,7 @@ MoneyGenerator.prototype.generateCash = function () {
  */
 MoneyGenerator.prototype.upgradeGenerator = function () {
 
-    var isWithdrawalSuccess = this._bank.tryWithdraw(this.upgradeCost());
+    var isWithdrawalSuccess = this.player().bank().tryWithdraw(this.upgradeCost());
 
     if (!isWithdrawalSuccess) {
 

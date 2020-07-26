@@ -7,6 +7,13 @@ function StockExchange() {
     var self = this;
 
     /**
+     * A reference to the current player
+     * @type {KnockoutObservable<Player>}
+     * @instance
+     */
+    this.player = ko.observable(null);
+
+    /**
      * A collection of companies referenced by the stock market
      * @type {KnockoutObservableArray<Company>}
      * @instance
@@ -19,13 +26,6 @@ function StockExchange() {
      * @instance
      */
     this.selectedCompany = ko.observable(null);
-
-    /**
-     * The bank holding the player's money
-     * @type {Bank}
-     * @instance
-     */
-    this._bank = null;
 
     /**
      * The number of units of stock that the player wishes to buy
@@ -88,7 +88,7 @@ StockExchange.prototype.tryPurchaseStocks = function(amount){
 
     var priceBuffer = this.priceToBuyStock();
 
-    if (!this._bank.tryWithdraw(priceBuffer)) {
+    if (!this.player().bank().tryWithdraw(priceBuffer)) {
 
         console.log("Could not afford to buy " + amount + " for $" + priceBuffer.toFixed(2))
         return false;
@@ -114,10 +114,10 @@ StockExchange.prototype.toJSON = function() {
 
 /**
  * Creates a new stock exchange
- * @param {Bank} bank - A reference to the player's bank, to ensure they have enough funds for any purchases
+ * @param {Player} player - A reference to the current player
  * @returns {StockExchange}
  */
-StockExchange.create = function(bank) {
+StockExchange.create = function(player) {
 
     var stockExchange = new StockExchange();
     var companies = [];
@@ -131,7 +131,7 @@ StockExchange.create = function(bank) {
     }
     
     stockExchange.companies(companies);
-    stockExchange._bank = bank;
+    stockExchange.player(player);
 
     return stockExchange;
 }
@@ -139,10 +139,10 @@ StockExchange.create = function(bank) {
 /**
  * Restores a ViewModel from JSON
  * @param {Object} savedStockExchange - A JSON object that references a StockExchange
- * @param {Bank} bank - A reference to the player's bank, to ensure they have enough funds for any purchases
+ * @param {Player} player - A reference to the current player
  * @returns {StockExchange}
  */
-StockExchange.restore = function(savedStockExchange, bank) {
+StockExchange.restore = function(savedStockExchange, player) {
 
     var stockExchange = new StockExchange();
     var companies = [];
@@ -156,8 +156,8 @@ StockExchange.restore = function(savedStockExchange, bank) {
     }
 
     stockExchange.companies(companies);
+    stockExchange.player(player);
     stockExchange.selectCompanyByName(savedStockExchange.selectedCompany);
-    stockExchange._bank = bank;
 
     return stockExchange;
 }

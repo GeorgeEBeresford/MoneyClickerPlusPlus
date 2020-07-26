@@ -13,11 +13,11 @@ window.addEventListener("load", function () {
 function Game() {
 
     /**
-     * The bank containing the player's money
-     * @type {KnockoutObservable<BankViewModel>}
+     * A reference to the current player
+     * @type {KnockoutObservable<Player>}
      * @instance
      */
-    this.bank = ko.observable(null);
+    this.player = ko.observable(null);
 
     /**
      * Generates money out of thin air for the player
@@ -62,10 +62,10 @@ Game.create = function () {
 
     var game = new Game();
 
-    game.bank(Bank.create());
-    game.moneyGenerator(MoneyGenerator.create(game.bank()));
+    game.player(Player.create());
+    game.moneyGenerator(MoneyGenerator.create(game.player()));
     game.persistentStorage(PersistentStorage.create(Game.persistentStoragePath));
-    game.ticker(Ticker.create(game.bank()));
+    game.ticker(Ticker.create(game.player()));
     game.currentPanel("MoneyGenerator");
 
     return game;
@@ -86,13 +86,13 @@ Game.restore = function () {
         return null;
     }
 
-    var restoredBank = Bank.restore(existingSave.bank);
-    var restoredMoneyGenerator = MoneyGenerator.restore(existingSave.moneyGenerator, restoredBank);
+    var restoredPlayer = Player.restore(existingSave.player);
+    var restoredMoneyGenerator = MoneyGenerator.restore(existingSave.moneyGenerator, restoredPlayer);
     var restoredPersistentStorage = PersistentStorage.restore(existingSave.persistentStorage, Game.persistentStoragePath);
-    var restoredTicker = Ticker.restore(existingSave.ticker, restoredBank);
+    var restoredTicker = Ticker.restore(existingSave.ticker, restoredPlayer);
 
     var game = new Game();
-    game.bank(restoredBank);
+    game.player(restoredPlayer);
     game.moneyGenerator(restoredMoneyGenerator);
     game.persistentStorage(restoredPersistentStorage);
     game.ticker(restoredTicker);
@@ -131,7 +131,7 @@ Game.prototype.toJSON = function () {
     return {
 
         currentPanel: this.currentPanel(),
-        bank: this.bank(),
+        player: this.player(),
         moneyGenerator: this.moneyGenerator(),
         persistentStorage: this.persistentStorage(),
         ticker: this.ticker()

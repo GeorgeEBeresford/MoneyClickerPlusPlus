@@ -21,6 +21,7 @@ module.exports = {
         "PersistentStorage": true,
         "Bank": true,
         "MathsLibrary": true,
+        "Player": true,
         "gameConfig": true
     }
 };
