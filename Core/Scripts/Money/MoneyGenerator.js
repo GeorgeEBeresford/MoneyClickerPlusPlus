@@ -59,7 +59,7 @@ function MoneyGenerator() {
     this.upgradeCost = ko.computed(function () {
 
         var upgradeCost = 20 * Math.pow(self.baseCashPerClick(), 2);
-        var flooredCost = Math.floor(upgradeCost * 100) / 100;
+        var flooredCost = MathsLibrary.floor(upgradeCost, 2);
 
         return flooredCost;
     })
@@ -135,7 +135,7 @@ MoneyGenerator.prototype.toJSON = function () {
 MoneyGenerator.prototype.getBoostCost = function (seconds) {
 
     var upgradeCost = seconds * Math.pow(this.baseCashPerClick(), 1.85);
-    var flooredCost = Math.floor(upgradeCost * 100) / 100;
+    var flooredCost = MathsLibrary.floor(upgradeCost, 2);
 
     return flooredCost;
 }

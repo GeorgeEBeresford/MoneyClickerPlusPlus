@@ -11,10 +11,15 @@
 
     &_display{
 
+        font-size: 2rem;
+        color: #DDD;
+        font-weight: bold;
+
         &-cash {
 
+            @extend .content_display;
             color: #6F4;
-            font-size: 2rem;
+            font-weight: normal;
         }
     }
 
@@ -69,6 +74,12 @@
 
             @extend .content_side;
             width: 89%;
+        }
+        
+        &-auto {
+
+            @extend .content_side;
+            width: auto;
         }
     }
 

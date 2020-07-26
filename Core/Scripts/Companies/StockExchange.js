@@ -1,7 +1,7 @@
- /**
-  * An object that allows the viewing, purchasing and selling of stocks for different companies
-  * @class
-  */
+/**
+ * An object that allows the viewing, purchasing and selling of stocks for different companies
+ * @class
+ */
 function StockExchange() {
 
     var self = this;
@@ -39,7 +39,7 @@ function StockExchange() {
      * @type {KnockoutComputed<Number>}
      * @instance
      */
-    this.priceToBuyStock = ko.computed(function() {
+    this.priceToBuyStock = ko.computed(function () {
 
         var companyBuffer = self.selectedCompany();
 
@@ -59,16 +59,16 @@ function StockExchange() {
  * @param {String} companyName - The name of the company which should be selected
  * @instance
  */
-StockExchange.prototype.selectCompanyByName = function(companyName) {
+StockExchange.prototype.selectCompanyByName = function (companyName) {
 
     var company = null;
     var companiesBuffer = this.companies();
 
-    for (var companyIndex = 0; companyIndex < companiesBuffer.length && company === null; companyIndex++){
+    for (var companyIndex = 0; companyIndex < companiesBuffer.length && company === null; companyIndex++) {
 
         var currentCompany = companiesBuffer[companyIndex];
 
-        if (currentCompany.companyName() == companyName){
+        if (currentCompany.companyName() == companyName) {
 
             company = currentCompany;
         }
@@ -84,17 +84,28 @@ StockExchange.prototype.selectCompanyByName = function(companyName) {
  * Attempts to purchase a specified number of stocks. Returns true or false depending on whether the player can afford to
  * @param {Number} amount - The number of stocks to purchase
  */
-StockExchange.prototype.tryPurchaseStocks = function(amount){
+StockExchange.prototype.tryPurchaseStocks = function (amount) {
 
     var priceBuffer = this.priceToBuyStock();
 
     if (!this.player().bank().tryWithdraw(priceBuffer)) {
-
-        console.log("Could not afford to buy " + amount + " for $" + priceBuffer.toFixed(2))
+        
         return false;
     }
 
-    console.log("Bought " + amount + " stocks");
+    var playerStockCollection = this.player().purchasedStock();
+    var company = this.selectedCompany();
+    var ownedStock = (playerStockCollection[company.companyName()] || {}).amount || 0;
+
+    ownedStock += amount;
+
+    playerStockCollection[company.companyName()] = {
+        amount: ownedStock,
+        dividends: company.stockYield()
+    };
+
+    // Let the knockout binding know there has been a change
+    this.player().purchasedStock(this.player().purchasedStock());
 }
 
 /**
@@ -102,7 +113,7 @@ StockExchange.prototype.tryPurchaseStocks = function(amount){
  * @instance
  * @returns {Object}
  */
-StockExchange.prototype.toJSON = function() {
+StockExchange.prototype.toJSON = function () {
 
     return {
 
@@ -117,7 +128,7 @@ StockExchange.prototype.toJSON = function() {
  * @param {Player} player - A reference to the current player
  * @returns {StockExchange}
  */
-StockExchange.create = function(player) {
+StockExchange.create = function (player) {
 
     var stockExchange = new StockExchange();
     var companies = [];
@@ -129,7 +140,7 @@ StockExchange.create = function(player) {
 
         companies.push(generatedCompany);
     }
-    
+
     stockExchange.companies(companies);
     stockExchange.player(player);
 
@@ -142,7 +153,7 @@ StockExchange.create = function(player) {
  * @param {Player} player - A reference to the current player
  * @returns {StockExchange}
  */
-StockExchange.restore = function(savedStockExchange, player) {
+StockExchange.restore = function (savedStockExchange, player) {
 
     var stockExchange = new StockExchange();
     var companies = [];

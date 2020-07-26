@@ -69,7 +69,8 @@ Bank.prototype.toJSON = function() {
 
     return {
 
-        balance: this.balance()
+        // Balance was being saved with absurd number of decimal places
+        balance: MathsLibrary.floor(this.balance(), 2)
     };
 }
 
@@ -79,7 +80,12 @@ Bank.prototype.toJSON = function() {
  */
 Bank.prototype.deposit = function (amount) {
 
-    this.balance(this.balance() + amount);
+    /**
+     * You can't have 0.001 dollars. It's just not possible.
+     */
+    amount = MathsLibrary.floor(amount, 2);
+    
+    this.balance(this.balance() + MathsLibrary.round(amount, 2));
 }
 
 /**
@@ -88,6 +94,11 @@ Bank.prototype.deposit = function (amount) {
  * @returns {Boolean}
  */
 Bank.prototype.tryWithdraw = function (amount) {
+
+    /**
+     * You can't have 0.001 dollars. It's just not possible.
+     */
+    amount = MathsLibrary.floor(amount, 2);
 
     if (this.balance() < amount) {
 

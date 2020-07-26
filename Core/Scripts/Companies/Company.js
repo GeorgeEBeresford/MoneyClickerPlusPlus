@@ -208,13 +208,13 @@ Company.prototype.makeRandomChange = function () {
     var modificationIsLargeRoll = MathsLibrary.getRandomNumber(0, 100);
     var modification = 0;
 
-    if (modificationIsLargeRoll < 0.01) {
+    if (modificationIsLargeRoll < 0.0001) {
 
-        modification = MathsLibrary.getRandomNumber(2, 10);
+        modification = MathsLibrary.getRandomNumber(8, 10);
     }
     else {
 
-        modification = MathsLibrary.getRandomNumber(0.01, 2);
+        modification = MathsLibrary.getRandomNumber(0.01, 0.75);
     }
 
     var goodOrBadRoll = MathsLibrary.getRandomNumber(0, 100);

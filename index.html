@@ -95,7 +95,10 @@
             <!-- Buy Stocks (Details) -->
             <div style="display: none" data-bind="visible: selectedCompany() !== null, with: selectedCompany">
                 <h1 class="content_title">Buy Stocks (Details)</h1>
-                <div class="content_display-cash" data-bind="text: 'Balance: ' + $root.player().bank().balancePreview()"></div>
+                <div class="content_align_left content_side-auto">
+                    <div class="content_display">Balance: <span class="content_display-cash" data-bind="text: $root.player().bank().balancePreview()"></span></div>
+                    <div class="content_display">Income: <span class="content_display-cash" data-bind="text: '$' + $root.player().getStockIncomePerMinute().toFixed(2) + ' per minute'"></span></div>
+                </div>
                 <div class="stockexchange">
                     <div class="content_side-thirty">
                         <button class="stockexchange_button-link"

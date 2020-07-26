@@ -4,12 +4,47 @@
  */
 function Player() {
 
+    var self = this;
+
     /**
      * The bank containing the player's money
      * @type {KnockoutObservable<BankViewModel>}
      * @instance
      */
     this.bank = ko.observable(null);
+
+    /**
+     * An object which will keep track of how many stocks are owned for each company
+     * @type {KnockoutObservable<{}>}
+     */
+    this.purchasedStock = ko.observable(null);
+    
+    /**
+     * Calculates the player's income per minute based off each company's dividends
+     * @type {KnockoutComputed<Number>}
+     */
+    this.getStockIncomePerMinute = ko.computed(function() {
+    
+        var purchasedStock = self.purchasedStock();
+
+        if (purchasedStock === null) {
+
+            return 0;
+        }
+
+        var dividends = 0;
+        var companyNames = Object.keys(purchasedStock);
+    
+        for (var stockIndex = 0; stockIndex < companyNames.length; stockIndex++) {
+    
+            var companyName = companyNames[stockIndex];
+            var stock = purchasedStock[companyName];
+    
+            dividends += stock.amount * stock.dividends;
+        }
+    
+        return dividends;
+    });
 }
 
 /**
@@ -21,9 +56,11 @@ Player.create = function() {
     var player = new Player();
 
     player.bank(Bank.create());
+    player.purchasedStock({});
 
     return player;
 }
+
 
 /**
  * Restores a player object from JSON
@@ -35,6 +72,7 @@ Player.restore = function(savedPlayer) {
     var player = new Player();
 
     player.bank(Bank.restore(savedPlayer.bank));
+    player.purchasedStock(savedPlayer.purchasedStock);
 
     return player;
 }
@@ -43,6 +81,7 @@ Player.prototype.toJSON = function() {
 
     return {
 
-        bank: this.bank()
+        bank: this.bank(),
+        purchasedStock: this.purchasedStock()
     };
 }

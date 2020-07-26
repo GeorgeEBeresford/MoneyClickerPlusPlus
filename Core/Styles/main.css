@@ -60,12 +60,18 @@ table {
   background-size: cover;
 }
 
-.content_display-cash {
-  color: #6F4;
+.content_display, .content_display-cash {
   font-size: 2rem;
+  color: #DDD;
+  font-weight: bold;
 }
 
-.content_side, .content_side-ten, .content_side-twenty, .content_side-thirty, .content_side-forty, .content_side-sixty, .content_side-seventy, .content_side-eighty, .content_side-ninety {
+.content_display-cash {
+  color: #6F4;
+  font-weight: normal;
+}
+
+.content_side, .content_side-ten, .content_side-twenty, .content_side-thirty, .content_side-forty, .content_side-sixty, .content_side-seventy, .content_side-eighty, .content_side-ninety, .content_side-auto {
   display: inline-block;
   width: 49%;
 }
@@ -100,6 +106,10 @@ table {
 
 .content_side-ninety {
   width: 89%;
+}
+
+.content_side-auto {
+  width: auto;
 }
 
 .content_title {
@@ -388,7 +398,7 @@ table {
   display: inline-block;
   background-color: #242424;
   width: 75%;
-  margin-top: 8px;
+  margin-top: 20px;
   padding: 20px 4px;
   min-width: 452px;
   border-radius: 8px;
