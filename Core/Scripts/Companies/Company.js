@@ -228,10 +228,10 @@ Company.prototype.makeRandomChange = function () {
 
     var roundedValue = MathsLibrary.round(this.stockValue() + modification, 2);
 
-    // A company can't have stocks worth negative dollars. It'd go bankrupt!
-    if (roundedValue < 0) {
+    // The game will be waaay too easy if we let the stock reach too low a value. For balance's sake, stop it from sinking too low.
+    if (roundedValue < this.stockYield() * 10.04) {
 
-        roundedValue = 0;
+        roundedValue = this.stockYield() * 10.04;
     }
 
     // Modify the value of the company
