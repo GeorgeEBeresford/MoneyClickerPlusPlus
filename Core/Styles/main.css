@@ -407,7 +407,11 @@ table {
 .stockexchange_title {
   font-weight: bold;
   font-size: 1.3rem;
-  margin: 20px 10px;
+}
+
+.stockexchange_title-subtitle {
+  font-size: 1.2rem;
+  color: #DDD;
 }
 
 .stockexchange_graph {

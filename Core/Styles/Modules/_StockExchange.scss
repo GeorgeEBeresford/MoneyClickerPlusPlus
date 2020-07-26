@@ -12,7 +12,12 @@
 
         font-weight: bold;
         font-size: 1.3rem;
-        margin: 20px 10px;
+
+        &-subtitle {
+
+            font-size: 1.2rem;
+            color: #DDD;
+        }
     }
 
     &_graph {

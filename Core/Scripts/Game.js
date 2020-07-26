@@ -55,6 +55,11 @@ function Game() {
 Game.persistentStoragePath = "moneyclicker++/savegame";
 
 /**
+ * The first panel that the player will see upon entering the game
+ */
+Game.defaultPanel = "MoneyGenerator";
+
+/**
  * Creates a new view model
  * @returns {Game}
  */
@@ -66,7 +71,7 @@ Game.create = function () {
     game.moneyGenerator(MoneyGenerator.create(game.player()));
     game.persistentStorage(PersistentStorage.create(Game.persistentStoragePath));
     game.ticker(Ticker.create(game.player()));
-    game.currentPanel("MoneyGenerator");
+    game.currentPanel(Game.defaultPanel);
 
     return game;
 }
@@ -96,7 +101,7 @@ Game.restore = function () {
     game.moneyGenerator(restoredMoneyGenerator);
     game.persistentStorage(restoredPersistentStorage);
     game.ticker(restoredTicker);
-    game.currentPanel(existingSave.currentPanel);
+    game.currentPanel(Game.defaultPanel);
 
     return game;
 }
@@ -120,6 +125,9 @@ Game.prototype.initialise = function () {
 Game.prototype.changePanel = function (panelName) {
 
     this.currentPanel(panelName);
+
+    // Reset their company selection so the player is presented with a fresh panel
+    this.ticker().stockExchange().selectedCompany(null);
 }
 
 /**
@@ -130,7 +138,6 @@ Game.prototype.toJSON = function () {
 
     return {
 
-        currentPanel: this.currentPanel(),
         player: this.player(),
         moneyGenerator: this.moneyGenerator(),
         persistentStorage: this.persistentStorage(),

@@ -115,6 +115,25 @@ function Company() {
 
         return orderedValues;
     });
+
+    /**
+     * A string which describes the quality of the company's dividends
+     * @type {KnockoutComputed<String>}
+     */
+    this.dividendsDescriptor = ko.computed(function() {
+
+        switch (self.stockYield()){
+
+            case (0): return "no";
+            case (1): return "very low";
+            case (2): return "low";
+            case (3): return "medium";
+            case (4): return "high";
+            case (5): return "very high";
+
+            default: throw "No descriptor for stockYield " + self.stockYield()
+        }
+    })
 }
 
 /**

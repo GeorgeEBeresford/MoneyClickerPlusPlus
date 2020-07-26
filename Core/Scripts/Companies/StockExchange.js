@@ -21,6 +21,29 @@ function StockExchange() {
     this.companies = ko.observableArray(null);
 
     /**
+     * Retrieves an array containing the companies that the player owns shares in. This can then be observed by the view
+     * @type {KnockoutComputed<Company>}
+     */
+    this.playerInvestedCompanies = ko.computed(function() {
+        
+        if (self.player() === null) {
+
+            return [];
+        }
+        
+        var companiesBuffer = self.companies();
+        var playerInvestmentsBuffer = Object.keys(self.player().purchasedStock());
+
+        var filteredCompanies = companiesBuffer.filter(function(potentialPlayerInvestment) {
+
+            var isInvestment = playerInvestmentsBuffer.indexOf(potentialPlayerInvestment.companyName());
+            return isInvestment;
+        })
+
+        return filteredCompanies;
+    })
+
+    /**
      * The company that is currently selected by the player
      * @type {KnockoutObservable<Company>}
      * @instance
@@ -52,75 +75,6 @@ function StockExchange() {
 
         return MathsLibrary.round(price, 2);
     })
-}
-
-/**
- * Finds the company with the given name and selects it for the player
- * @param {String} companyName - The name of the company which should be selected
- * @instance
- */
-StockExchange.prototype.selectCompanyByName = function (companyName) {
-
-    var company = null;
-    var companiesBuffer = this.companies();
-
-    for (var companyIndex = 0; companyIndex < companiesBuffer.length && company === null; companyIndex++) {
-
-        var currentCompany = companiesBuffer[companyIndex];
-
-        if (currentCompany.companyName() == companyName) {
-
-            company = currentCompany;
-        }
-    }
-
-    if (company !== null) {
-
-        this.selectedCompany(company);
-    }
-}
-
-/**
- * Attempts to purchase a specified number of stocks. Returns true or false depending on whether the player can afford to
- * @param {Number} amount - The number of stocks to purchase
- */
-StockExchange.prototype.tryPurchaseStocks = function (amount) {
-
-    var priceBuffer = this.priceToBuyStock();
-
-    if (!this.player().bank().tryWithdraw(priceBuffer)) {
-        
-        return false;
-    }
-
-    var playerStockCollection = this.player().purchasedStock();
-    var company = this.selectedCompany();
-    var ownedStock = (playerStockCollection[company.companyName()] || {}).amount || 0;
-
-    ownedStock += amount;
-
-    playerStockCollection[company.companyName()] = {
-        amount: ownedStock,
-        dividends: company.stockYield()
-    };
-
-    // Let the knockout binding know there has been a change
-    this.player().purchasedStock(this.player().purchasedStock());
-}
-
-/**
- * Converts the ViewModel to JSON
- * @instance
- * @returns {Object}
- */
-StockExchange.prototype.toJSON = function () {
-
-    return {
-
-        companies: this.companies(),
-        ticker: this.ticker,
-        selectedCompany: this.selectedCompany() !== null ? this.selectedCompany().companyName() : null
-    };
 }
 
 /**
@@ -168,7 +122,57 @@ StockExchange.restore = function (savedStockExchange, player) {
 
     stockExchange.companies(companies);
     stockExchange.player(player);
-    stockExchange.selectCompanyByName(savedStockExchange.selectedCompany);
 
     return stockExchange;
+}
+
+/**
+ * Attempts to purchase a specified number of stocks. Returns true or false depending on whether the player can afford to
+ * @param {Number} amount - The number of stocks to purchase
+ */
+StockExchange.prototype.tryPurchaseStocks = function () {
+
+    var priceBuffer = this.priceToBuyStock();
+
+    if (isNaN(this.stockAmountToBuy())) {
+
+        return false;
+    }
+
+    if (!this.player().bank().tryWithdraw(priceBuffer)) {
+        
+        return false;
+    }
+
+    var playerStockCollection = this.player().purchasedStock();
+    var company = this.selectedCompany();
+    var ownedStock = playerStockCollection[company.companyName()];
+
+    if (typeof(ownedStock) === "undefined") {
+        
+        ownedStock = playerStockCollection[company.companyName()] = {
+            amount: 0,
+            dividends: company.stockYield(),
+            valueWhenPurchased: company.stockValue()
+        };
+    }
+
+    ownedStock.amount += parseInt(this.stockAmountToBuy());
+
+    // Let the knockout binding know there has been a change
+    this.player().purchasedStock(this.player().purchasedStock());
+}
+
+/**
+ * Converts the ViewModel to JSON
+ * @instance
+ * @returns {Object}
+ */
+StockExchange.prototype.toJSON = function () {
+
+    return {
+
+        companies: this.companies(),
+        ticker: this.ticker
+    };
 }
