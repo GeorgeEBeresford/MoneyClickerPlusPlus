@@ -200,6 +200,12 @@
             min-width: 0;
         }
 
+        &-thick {
+
+            @extend .stockexchange_button;
+            height: 80px;
+        }
+
         &-action {
 
             @extend .stockexchange_button;
@@ -216,6 +222,12 @@
 
                 @extend .stockexchange_button-action;
                 min-width: 0;
+            }
+
+            &-thick {
+
+                @extend .stockexchange_button-action;
+                height: 80px;
             }
         }
 
@@ -235,6 +247,37 @@
 
                 @extend .stockexchange_button-link;
                 min-width: 0;
+            }
+
+            &-thick {
+
+                @extend .stockexchange_button-link;
+                height: 80px;
+            }
+        }
+
+        &-danger {
+
+            @extend .stockexchange_button;
+            background-color: #F66;
+            color: #ddd;
+
+            &:hover {
+
+                cursor: pointer;
+                background-color: rgb(194, 75, 75);
+            }
+
+            &-noMinWidth {
+
+                @extend .stockexchange_button-danger;
+                min-width: 0;
+            }
+
+            &-thick {
+
+                @extend .stockexchange_button-danger;
+                height: 80px;
             }
         }
     }

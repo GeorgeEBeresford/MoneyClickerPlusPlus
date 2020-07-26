@@ -60,7 +60,7 @@ table {
   background-size: cover;
 }
 
-.content_display, .content_display-cash {
+.content_display, .content_display-cash, .content_display-warning {
   font-size: 2rem;
   color: #DDD;
   font-weight: bold;
@@ -68,6 +68,11 @@ table {
 
 .content_display-cash {
   color: #6F4;
+  font-weight: normal;
+}
+
+.content_display-warning {
+  color: #F66;
   font-weight: normal;
 }
 
@@ -171,7 +176,7 @@ table {
 }
 
 .content_main_background {
-  position: absolute;
+  position: fixed;
   margin-left: 30%;
   width: 70%;
   height: 100%;
@@ -552,7 +557,7 @@ table {
           box-sizing: border-box;
 }
 
-.stockexchange_button, .stockexchange_button-noMinWidth, .stockexchange_button-action, .stockexchange_button-action-noMinWidth, .stockexchange_button-link, .stockexchange_button-link-noMinWidth {
+.stockexchange_button, .stockexchange_button-noMinWidth, .stockexchange_button-thick, .stockexchange_button-action, .stockexchange_button-action-noMinWidth, .stockexchange_button-action-thick, .stockexchange_button-link, .stockexchange_button-link-noMinWidth, .stockexchange_button-link-thick, .stockexchange_button-danger, .stockexchange_button-danger-noMinWidth, .stockexchange_button-danger-thick {
   min-width: 250px;
   padding: 4px 8px;
   border: 0;
@@ -567,7 +572,7 @@ table {
   color: #afafaf;
 }
 
-.stockexchange_button:hover, .stockexchange_button-noMinWidth:hover, .stockexchange_button-action:hover, .stockexchange_button-action-noMinWidth:hover, .stockexchange_button-link:hover, .stockexchange_button-link-noMinWidth:hover {
+.stockexchange_button:hover, .stockexchange_button-noMinWidth:hover, .stockexchange_button-thick:hover, .stockexchange_button-action:hover, .stockexchange_button-action-noMinWidth:hover, .stockexchange_button-action-thick:hover, .stockexchange_button-link:hover, .stockexchange_button-link-noMinWidth:hover, .stockexchange_button-link-thick:hover, .stockexchange_button-danger:hover, .stockexchange_button-danger-noMinWidth:hover, .stockexchange_button-danger-thick:hover {
   cursor: not-allowed;
 }
 
@@ -575,12 +580,16 @@ table {
   min-width: 0;
 }
 
-.stockexchange_button-action, .stockexchange_button-action-noMinWidth {
+.stockexchange_button-thick {
+  height: 80px;
+}
+
+.stockexchange_button-action, .stockexchange_button-action-noMinWidth, .stockexchange_button-action-thick {
   background-color: #686;
   color: #ddd;
 }
 
-.stockexchange_button-action:hover, .stockexchange_button-action-noMinWidth:hover {
+.stockexchange_button-action:hover, .stockexchange_button-action-noMinWidth:hover, .stockexchange_button-action-thick:hover {
   cursor: pointer;
   background-color: #464;
 }
@@ -589,18 +598,44 @@ table {
   min-width: 0;
 }
 
-.stockexchange_button-link, .stockexchange_button-link-noMinWidth {
+.stockexchange_button-action-thick {
+  height: 80px;
+}
+
+.stockexchange_button-link, .stockexchange_button-link-noMinWidth, .stockexchange_button-link-thick {
   background-color: #A84;
   color: #ddd;
 }
 
-.stockexchange_button-link:hover, .stockexchange_button-link-noMinWidth:hover {
+.stockexchange_button-link:hover, .stockexchange_button-link-noMinWidth:hover, .stockexchange_button-link-thick:hover {
   cursor: pointer;
   background-color: #770;
 }
 
 .stockexchange_button-link-noMinWidth {
   min-width: 0;
+}
+
+.stockexchange_button-link-thick {
+  height: 80px;
+}
+
+.stockexchange_button-danger, .stockexchange_button-danger-noMinWidth, .stockexchange_button-danger-thick {
+  background-color: #F66;
+  color: #ddd;
+}
+
+.stockexchange_button-danger:hover, .stockexchange_button-danger-noMinWidth:hover, .stockexchange_button-danger-thick:hover {
+  cursor: pointer;
+  background-color: #c24b4b;
+}
+
+.stockexchange_button-danger-noMinWidth {
+  min-width: 0;
+}
+
+.stockexchange_button-danger-thick {
+  height: 80px;
 }
 
 .stockexchange_row {

@@ -30,14 +30,16 @@ function StockExchange() {
 
             return [];
         }
-        
+
         var companiesBuffer = self.companies();
         var playerInvestmentsBuffer = Object.keys(self.player().purchasedStock());
 
         var filteredCompanies = companiesBuffer.filter(function(potentialPlayerInvestment) {
 
-            var isInvestment = playerInvestmentsBuffer.indexOf(potentialPlayerInvestment.companyName());
-            return isInvestment;
+            var companyName = potentialPlayerInvestment.companyName();
+            var isInvestment = playerInvestmentsBuffer.indexOf(companyName) !== -1;
+
+            return isInvestment && self.player().purchasedStock()[companyName].amount !== 0;
         })
 
         return filteredCompanies;
@@ -66,12 +68,18 @@ function StockExchange() {
 
         var companyBuffer = self.selectedCompany();
 
+        if (isNaN(self.stockAmountToBuy())) {
+
+            return 0;
+        }
+
         if (companyBuffer === null) {
 
             return 0;
         }
 
-        var price = self.stockAmountToBuy() * companyBuffer.stockValue();
+        var stockAmount = parseInt(self.stockAmountToBuy());
+        var price = stockAmount * companyBuffer.stockValue();
 
         return MathsLibrary.round(price, 2);
     })
@@ -125,6 +133,43 @@ StockExchange.restore = function (savedStockExchange, player) {
 
     return stockExchange;
 }
+
+/**
+ * Attempts to purchase a specified number of stocks. Returns true or false depending on whether the player can afford to
+ * @param {Number} amount - The number of stocks to purchase
+ */
+StockExchange.prototype.trySellStocks = function () {
+
+    if (isNaN(this.stockAmountToBuy()) || this.stockAmountToBuy() === "0") {
+
+        return false;
+    }
+
+    var playerStockCollection = this.player().purchasedStock();
+    var company = this.selectedCompany();
+    var ownedStock = playerStockCollection[company.companyName()];
+
+    if (ownedStock.amount < this.stockAmountToBuy()){
+
+        return false;
+    }
+    
+    var totalStockvalue = this.priceToBuyStock();
+
+    ownedStock.amount -= parseInt(this.stockAmountToBuy());
+
+    // Since we no longer own any of these stocks, we can safely discard this
+    if (ownedStock.length === 0) {
+
+        ownedStock.valueWhenPurchased = 0;
+    }
+
+    this.player().bank().deposit(totalStockvalue);
+
+    // Let the knockout binding know there has been a change
+    this.player().purchasedStock(this.player().purchasedStock());
+}
+
 
 /**
  * Attempts to purchase a specified number of stocks. Returns true or false depending on whether the player can afford to

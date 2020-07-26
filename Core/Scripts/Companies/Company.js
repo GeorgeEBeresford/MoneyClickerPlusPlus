@@ -87,6 +87,44 @@ function Company() {
     })
 
     /**
+     * Retrieves the number of stocks that a player owns for the current company
+     * @param {Player} player - An object representing the player
+     * @returns {Number}
+     */
+    Company.prototype.getPlayerStockCount = function(player) {
+
+        var purchasedStock = player.purchasedStock();
+        var investmentsInThisCompany = purchasedStock[this.companyName()];
+
+        if (typeof(investmentsInThisCompany) === "undefined") {
+
+            return 0;
+        }
+
+        var amount = investmentsInThisCompany.amount;
+
+        return amount;
+    }
+
+    Company.prototype.getPlayerStockProfit = function(player) {
+
+        var purchasedStock = player.purchasedStock();
+        var investmentsInThisCompany = purchasedStock[this.companyName()];
+
+        if (typeof(investmentsInThisCompany) === "undefined" || investmentsInThisCompany.amount === 0) {
+
+            return 0;
+        }
+
+        var initialValue = investmentsInThisCompany.valueWhenPurchased;
+        var currentValue = this.stockValue();
+        var valueDifference = currentValue - initialValue;
+        var profit = (valueDifference / currentValue) * 100;
+
+        return profit;
+    }
+
+    /**
      * The company's historic values ordered by lowest to highest (the company's current value is included in this)
      * @type {KnockoutComputed<Number>}
      * @instance
