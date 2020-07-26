@@ -1,0 +1,21 @@
+{
+  "name": "money-clicker",
+  "version": "1.0.0",
+  "description": "A browser page spin on the mobile game, Money Clicker. The original game was really fun and addicting, but was sadly buggy to the point of becoming irritating and unplayable after a few days. This project seeks to create the same feel of the game while actively correcting bugs that crop up",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.5.0"
+  },
+  "scripts": {
+    "eslint": "eslint Core/Scripts"
+  },
+  "keywords": [
+    "mobile",
+    "game",
+    "moneyclicker",
+    "moneyclicker++"
+  ],
+  "author": "MrDinnertime",
+  "license": "ISC"
+}

@@ -1,0 +1,649 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.content {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  color: #aaa;
+  font-size: 1rem;
+  background: url("/Core/Images/pexels-photo-373912.webp") no-repeat center center fixed;
+  background-size: cover;
+}
+
+.content_display-cash {
+  color: #6F4;
+  font-size: 2rem;
+}
+
+.content_side, .content_side-ten, .content_side-twenty, .content_side-thirty, .content_side-forty, .content_side-sixty, .content_side-seventy, .content_side-eighty, .content_side-ninety {
+  display: inline-block;
+  width: 49%;
+}
+
+.content_side-ten {
+  width: 9%;
+}
+
+.content_side-twenty {
+  width: 19%;
+}
+
+.content_side-thirty {
+  width: 29%;
+}
+
+.content_side-forty {
+  width: 39%;
+}
+
+.content_side-sixty {
+  width: 59%;
+}
+
+.content_side-seventy {
+  width: 69%;
+}
+
+.content_side-eighty {
+  width: 79%;
+}
+
+.content_side-ninety {
+  width: 89%;
+}
+
+.content_title {
+  font-size: 2rem;
+  color: #AAA;
+  margin: 0 0 20px 0;
+  background-color: #222;
+  background-color: rgba(34, 34, 34, 0.8);
+  padding: 30px;
+  width: 100%;
+}
+
+.content_fill {
+  width: 100%;
+  height: 100%;
+}
+
+.content_align_left {
+  text-align: left;
+}
+
+.content_align_center {
+  text-align: center;
+}
+
+.content_align_right {
+  text-align: right;
+}
+
+.content_align_top {
+  vertical-align: top;
+}
+
+.content_align_middle {
+  vertical-align: middle;
+}
+
+.content_align_bottom {
+  vertical-align: bottom;
+}
+
+.content_clearfloat:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.content_main {
+  display: block;
+  width: 70%;
+  min-width: 300px;
+  border-left: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin-left: 30%;
+  text-align: center;
+  opacity: 0.98;
+  min-width: 540px;
+}
+
+.content_main_background {
+  position: absolute;
+  margin-left: 30%;
+  width: 70%;
+  height: 100%;
+  background-color: #444;
+  background-color: rgba(68, 68, 68, 0.8);
+}
+
+.content_sidebar {
+  display: block;
+  width: 30%;
+  min-width: 200px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  position: fixed;
+  height: 100%;
+  text-align: left;
+  opacity: 0.98;
+  background-color: #222;
+  background-color: rgba(34, 34, 34, 0.8);
+}
+
+.content_sidebar:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.content_footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 70px;
+  z-index: 5;
+  text-align: center;
+  width: 100%;
+  background-color: #353;
+  font-weight: bold;
+  font-size: 1.3rem;
+  padding-top: 20px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.content_hidden {
+  display: none;
+}
+
+.navigationbar_options {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding-top: 0;
+}
+
+.navigationbar_option, .navigationbar_option-home {
+  width: 100%;
+  display: block;
+  padding: 8px 4px;
+  border-top: 1px solid #631;
+  background-color: #A84;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  text-align: center;
+  color: #ddd;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.navigationbar_option-home {
+  width: 100%;
+  padding: 20%;
+  background-image: url("/Core/Images/coins-money-finance-pennies-change-wallpaper-preview.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.navigationbar_option-home:hover {
+  opacity: 0.8;
+}
+
+.navigationbar_option:hover, .navigationbar_option-home:hover {
+  cursor: pointer;
+  background-color: #770;
+}
+
+.clicker {
+  display: inline-block;
+  text-align: center;
+  padding-top: 10px;
+  width: 50%;
+}
+
+.clicker:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.clicker_field, .clicker_field_group {
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  margin-top: 10px;
+}
+
+.clicker_field_group {
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.clicker_field:after, .clicker_field_group:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.clicker_input {
+  display: block;
+  border: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 80%;
+  padding: 8px 6px;
+  margin-left: 10%;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.clicker_button, .clicker_button-grouped, .clicker_button-generator {
+  display: block;
+  border: 0;
+  padding: 8px 6px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  text-align: center;
+  background-color: #686;
+  color: #ddd;
+  font-weight: bold;
+  width: 100%;
+  font-size: 1rem;
+  border-radius: 4px;
+}
+
+.clicker_button:hover, .clicker_button-grouped:hover, .clicker_button-generator:hover {
+  cursor: pointer;
+  background-color: #464;
+}
+
+.clicker_button:last-child, .clicker_button-grouped:last-child, .clicker_button-generator:last-child {
+  margin-right: 0;
+}
+
+.clicker_button-grouped {
+  width: 33.3%;
+  margin-top: 0;
+  border-radius: 0;
+  float: left;
+}
+
+.clicker_button-grouped:nth-child(1), .clicker_button-grouped:nth-child(2) {
+  border-right: 1px solid #444;
+}
+
+.clicker_button-generator {
+  margin-top: 0;
+  width: 80%;
+  text-align: center;
+  padding: 50px 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin-bottom: 8px;
+  display: inline-block;
+  border-radius: 8px;
+}
+
+.ticker {
+  display: inline-block;
+  background-color: #242424;
+  width: 50%;
+  margin-top: 8px;
+  padding: 4px;
+  min-width: 452px;
+  border-radius: 8px;
+}
+
+.ticker:hover {
+  cursor: default;
+}
+
+.ticker_company, .ticker_company-negative, .ticker_company-none {
+  display: inline-block;
+  width: 100%;
+  padding: 8px 4px;
+  color: #6F6;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.ticker_company-negative {
+  color: #F66;
+}
+
+.ticker_company-none {
+  color: #aaa;
+}
+
+.ticker_company_name {
+  padding-right: 8px;
+  width: 80%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: inline-block;
+  text-align: left;
+}
+
+.ticker_company_performance {
+  width: 19%;
+  display: inline-block;
+  text-align: right;
+  font-weight: bold;
+}
+
+.stockexchange {
+  display: inline-block;
+  background-color: #242424;
+  width: 75%;
+  margin-top: 8px;
+  padding: 20px 4px;
+  min-width: 452px;
+  border-radius: 8px;
+}
+
+.stockexchange_title {
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin: 20px 10px;
+}
+
+.stockexchange_graph {
+  border: 2px solid #A84;
+  height: 300px;
+  background-color: #ECC;
+  background-color: rgba(255, 240, 240, 0.8);
+  color: #444;
+  font-size: 1rem;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 100%;
+  border-radius: 4px;
+  text-align: right;
+}
+
+.stockexchange_graph_labels-Y {
+  height: 300px;
+  padding: 10px;
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  position: relative;
+}
+
+.stockexchange_graph_labels-X {
+  width: 100%;
+  display: block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  position: relative;
+  text-align: left;
+  height: 1rem;
+}
+
+.stockexchange_graph_label-Y {
+  height: 12%;
+  display: block;
+  position: absolute;
+  min-width: 20px;
+}
+
+.stockexchange_graph_label-X {
+  position: absolute;
+  display: inline-block;
+  width: 10%;
+  vertical-align: middle;
+}
+
+.stockexchange_graph_label-axisY {
+  padding-top: 140px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.stockexchange_graph_label-axisX {
+  padding-top: 10px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.stockexchange_graph_trace {
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.stockexchange_graph_trace-Y {
+  width: 100%;
+  height: 1px;
+  border-top: 1px solid #242424;
+  opacity: 0.2;
+  position: absolute;
+}
+
+.stockexchange_graph_trace-X {
+  width: 1px;
+  height: 100%;
+  border-left: 1px solid #242424;
+  opacity: 0.2;
+  position: absolute;
+}
+
+.stockexchange_graph_container {
+  position: relative;
+  padding-right: 16px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.stockexchange_graph_point {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: black;
+  border-radius: 100%;
+  z-index: 3;
+}
+
+.stockexchange_graph_trend {
+  fill: none;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke: rgba(0, 0, 0, 0.5);
+}
+
+.stockexchange_company, .stockexchange_company-negative, .stockexchange_company-none {
+  display: inline-block;
+  padding: 8px 4px;
+  color: #6F6;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.stockexchange_company-negative {
+  color: #F66;
+}
+
+.stockexchange_company-none {
+  color: #aaa;
+}
+
+.stockexchange_company_name {
+  padding-right: 8px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.stockexchange_company_performance {
+  text-align: center;
+  font-weight: bold;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.stockexchange_button, .stockexchange_button-noMinWidth, .stockexchange_button-action, .stockexchange_button-action-noMinWidth, .stockexchange_button-link, .stockexchange_button-link-noMinWidth {
+  min-width: 250px;
+  padding: 4px 8px;
+  border: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  text-align: center;
+  color: #ddd;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 4px;
+  background-color: #777;
+  color: #afafaf;
+}
+
+.stockexchange_button-noMinWidth {
+  min-width: 0;
+}
+
+.stockexchange_button-action, .stockexchange_button-action-noMinWidth {
+  background-color: #686;
+  color: #ddd;
+}
+
+.stockexchange_button-action:hover, .stockexchange_button-action-noMinWidth:hover {
+  cursor: pointer;
+  background-color: #464;
+}
+
+.stockexchange_button-action-noMinWidth {
+  min-width: 0;
+}
+
+.stockexchange_button-link, .stockexchange_button-link-noMinWidth {
+  background-color: #A84;
+  color: #ddd;
+}
+
+.stockexchange_button-link:hover, .stockexchange_button-link-noMinWidth:hover {
+  cursor: pointer;
+  background-color: #770;
+}
+
+.stockexchange_button-link-noMinWidth {
+  min-width: 0;
+}
+
+.stockexchange_row {
+  margin-top: 20px;
+}
+
+.stockexchange_field {
+  display: inline-block;
+  padding-left: 8px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.stockexchange_input, .stockexchange_input-disabled {
+  width: auto;
+  min-width: 200px;
+  display: block;
+  border: 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #686;
+  background-color: rgba(102, 136, 102, 0.8);
+  color: #DDD;
+}
+
+.stockexchange_input:hover, .stockexchange_input-disabled:hover {
+  cursor: pointer;
+  background-color: #464;
+}
+
+.stockexchange_input-disabled {
+  background-color: #777;
+  color: #afafaf;
+}
+
+.stockexchange_input-disabled:hover {
+  background-color: #777;
+  color: #afafaf;
+  cursor: not-allowed;
+}
+
+.stockexchange_input-text, .stockexchange_input-text-disabled {
+  border: 0;
+  background-color: #ECC;
+  background-color: rgba(255, 240, 240, 0.8);
+  color: #444;
+  border-radius: 2px;
+  padding: 2px 8px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.stockexchange_input-text-disabled {
+  background-color: #999;
+  color: #ddd;
+}
+
+.stockexchange_input-text-disabled:hover {
+  cursor: not-allowed;
+}
+/*# sourceMappingURL=main.css.map */

@@ -1,0 +1,100 @@
+.clicker {
+
+    display: inline-block;
+    text-align: center;
+    padding-top: 10px;
+    width: 50%;
+
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    &_field {
+
+        display: block;
+        width: 100%;
+        margin-bottom: 0;
+        margin-top: 10px;
+
+        &_group {
+
+            @extend .clicker_field;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        &:after {
+            
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    &_input {
+
+        display: block;
+        border: 0;
+        box-sizing: border-box;
+        width: 80%;
+        padding: 8px 6px;
+        margin-left: 10%;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    &_button {
+
+        display: block;
+        border: 0;
+        padding: 8px 6px;
+        box-sizing: border-box;
+        text-align: center;
+        background-color: #686;
+        color: #ddd;
+        font-weight: bold;
+        width: 100%;
+        font-size: 1rem;
+        border-radius: 4px;
+
+        &:hover {
+
+            cursor: pointer;
+            background-color: #464;
+        }
+
+        &:last-child {
+
+            margin-right: 0;
+        }
+        
+        &-grouped {
+            
+            @extend .clicker_button;
+            width: 33.3%;
+            margin-top: 0;
+            border-radius: 0;
+            float: left;
+
+            &:nth-child(1), &:nth-child(2) {
+
+                border-right: 1px solid #444;
+            }
+        }
+
+        &-generator {
+
+            @extend .clicker_button;
+            margin-top: 0;
+            width: 80%;
+            text-align: center;
+            padding: 50px 0;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+            display: inline-block;
+            border-radius: 8px;
+        }
+    }
+}

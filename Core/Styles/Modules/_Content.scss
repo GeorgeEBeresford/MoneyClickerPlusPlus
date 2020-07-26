@@ -1,0 +1,197 @@
+.content {
+
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    color: #aaa;
+    font-size: 1rem;
+    background: url("/Core/Images/pexels-photo-373912.webp") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    &_display{
+
+        &-cash {
+
+            color: #6F4;
+            font-size: 2rem;
+        }
+    }
+
+    &_side {
+
+        display: inline-block;
+        width: 49%;
+
+        &-ten {
+
+            @extend .content_side;
+            width: 9%;
+        }
+
+        &-twenty {
+
+            @extend .content_side;
+            width: 19%;
+        }
+
+        &-thirty {
+
+            @extend .content_side;
+            width: 29%;
+        }
+
+        &-forty {
+
+            @extend .content_side;
+            width: 39%;
+        }
+
+        &-sixty {
+
+            @extend .content_side;
+            width: 59%;
+        }
+
+        &-seventy {
+
+            @extend .content_side;
+            width: 69%;
+        }
+
+        &-eighty {
+
+            @extend .content_side;
+            width: 79%;
+        }
+
+        &-ninety {
+
+            @extend .content_side;
+            width: 89%;
+        }
+    }
+
+    &_title {
+
+        font-size: 2rem;
+        color: #AAA;
+        margin: 0 0 20px 0;
+        background-color: #222;
+        background-color: rgba(#222, 0.8);
+        padding: 30px;
+        width: 100%;
+    }
+
+    &_fill {
+
+        width: 100%;
+        height: 100%;
+    }
+
+    &_align {
+
+        &_left {
+
+            text-align: left;
+        }
+
+        &_center {
+
+            text-align: center;
+        }
+
+        &_right {
+
+            text-align: right;
+        }
+
+        &_top {
+
+            vertical-align: top;
+        }
+
+        &_middle {
+
+            vertical-align: middle;
+        }
+
+        &_bottom {
+
+            vertical-align: bottom;
+        }
+    }
+
+    &_clearfloat {
+
+        &:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    &_main {
+
+        display: block;
+        width: 70%;
+        min-width: 300px;
+        border-left: 0;
+        box-sizing: border-box;
+        margin-left: 30%;
+        text-align: center;
+        opacity: 0.98;
+        min-width: 540px;
+        
+        &_background {
+
+            position: absolute;
+            margin-left: 30%;
+            width: 70%;
+            height: 100%;
+            background-color: #444;
+            background-color: rgba(#444, 0.8);
+        }
+    }
+
+    &_sidebar {
+
+        display: block;
+        width: 30%;
+        min-width: 200px;
+        box-sizing: border-box;
+        position: fixed;
+        height: 100%;
+        text-align: left;
+        opacity: 0.98;
+        background-color: #222;
+        background-color: rgba(#222, 0.8);
+
+        &:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    &_footer {
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 70px;
+        z-index: 5;
+        text-align: center;
+        width: 100%;
+        background-color: #353;
+        font-weight: bold;
+        font-size: 1.3rem;
+        padding-top: 20px;
+        box-sizing: border-box;
+    }
+
+    &_hidden {
+
+        display: none;
+    }
+}

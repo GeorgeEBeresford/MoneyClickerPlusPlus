@@ -1,0 +1,44 @@
+.navigationbar {
+
+    &_options {
+
+        width: 100%;
+        box-sizing: border-box;
+        padding-top: 0;
+    }
+
+    &_option {
+
+        width: 100%;
+        display: block;
+        padding: 8px 4px;
+        border-top: 1px solid #631;
+        background-color: #A84;
+        box-sizing: border-box;
+        text-align: center;
+        color: #ddd;
+        font-weight: bold;
+        font-size: 1rem;
+
+        &-home {
+            
+            @extend .navigationbar_option;
+            width: 100%;
+            padding: 20%;
+            background-image: url("/Core/Images/coins-money-finance-pennies-change-wallpaper-preview.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+
+            &:hover {
+
+                opacity: 0.8;
+            }
+        }
+
+        &:hover {
+
+            cursor: pointer;
+            background-color: #770;
+        }
+    }
+}

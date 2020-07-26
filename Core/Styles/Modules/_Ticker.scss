@@ -1,0 +1,53 @@
+.ticker {
+
+    display: inline-block;
+    background-color: #242424;
+    width: 50%;
+    margin-top: 8px;
+    padding: 4px;
+    min-width: 452px;
+    border-radius: 8px;
+
+    &:hover {
+
+        cursor: default;
+    }
+
+    &_company {
+
+        display: inline-block;
+        width: 100%;
+        padding: 8px 4px;
+        color: #6F6;
+        box-sizing: border-box;
+
+        &-negative {
+
+            @extend .ticker_company;
+            color: #F66;
+        }
+
+        &-none {
+
+            @extend .ticker_company;
+            color: #aaa;
+        }
+
+        &_name {
+
+            padding-right: 8px;
+            width: 80%;
+            box-sizing: border-box;
+            display: inline-block;
+            text-align: left;
+        }
+
+        &_performance {
+
+            width: 19%;
+            display: inline-block;
+            text-align: right;
+            font-weight: bold;
+        }
+    }
+}
