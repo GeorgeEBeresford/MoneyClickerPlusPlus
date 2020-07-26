@@ -64,7 +64,7 @@
             }
 
             &-X {
-                
+
                 position: absolute;
                 display: inline-block;
                 width: 10%;
@@ -133,7 +133,7 @@
             fill: none;
             stroke-width: 1;
             stroke-linecap: round;
-            stroke: rgba(0,0,0,0.5);
+            stroke: rgba(0, 0, 0, 0.5);
         }
     }
 
@@ -184,6 +184,11 @@
         background-color: #777;
         color: #afafaf;
 
+        &:hover {
+
+            cursor: not-allowed;
+        }
+
         &-noMinWidth {
 
             @extend .stockexchange_button;
@@ -203,7 +208,7 @@
             }
 
             &-noMinWidth {
-    
+
                 @extend .stockexchange_button-action;
                 min-width: 0;
             }
@@ -222,7 +227,7 @@
             }
 
             &-noMinWidth {
-    
+
                 @extend .stockexchange_button-link;
                 min-width: 0;
             }
@@ -240,30 +245,26 @@
         padding-left: 8px;
         box-sizing: border-box;
         vertical-align: middle;
+        padding-top: 10px;
     }
 
-    &_input {
+    &_label {
 
-        width: auto;
         min-width: 200px;
         display: block;
         border: 0;
-        padding: 4px 8px;
         border-radius: 4px;
         font-size: 1rem;
         background-color: #686;
         background-color: rgba(102, 136, 102, 0.8);
         color: #DDD;
-
-        &:hover {
-
-            cursor: pointer;
-            background-color: #464;
-        }
+        padding: 4px 4px;
+        font-weight: bold;
+        box-sizing: border-box;
 
         &-disabled {
 
-            @extend .stockexchange_input;
+            @extend .stockexchange_label;
             background-color: #777;
             color: #afafaf;
 
@@ -274,28 +275,28 @@
                 cursor: not-allowed;
             }
         }
+    }
 
-        &-text {
+    &_input {
 
-            border: 0;
-            background-color: #ECC;
-            background-color: rgba(255, 240, 240, 0.8);
-            color: #444;
-            border-radius: 2px;
-            padding: 2px 8px;
-            box-sizing: border-box;
-            font-size: 1rem;
+        border: 0;
+        background-color: #ECC;
+        background-color: rgba(255, 240, 240, 0.8);
+        color: #444;
+        border-radius: 2px;
+        padding: 2px 8px;
+        box-sizing: border-box;
+        font-size: 1rem;
 
-            &-disabled {
+        &-disabled {
 
-                @extend .stockexchange_input-text;
-                background-color: #999;
-                color: #ddd;
+            @extend .stockexchange_input;
+            background-color: #999;
+            color: #ddd;
 
-                &:hover {
-    
-                    cursor: not-allowed;
-                }
+            &:hover {
+
+                cursor: not-allowed;
             }
         }
     }

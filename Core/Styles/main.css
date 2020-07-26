@@ -553,6 +553,10 @@ table {
   color: #afafaf;
 }
 
+.stockexchange_button:hover, .stockexchange_button-noMinWidth:hover, .stockexchange_button-action:hover, .stockexchange_button-action-noMinWidth:hover, .stockexchange_button-link:hover, .stockexchange_button-link-noMinWidth:hover {
+  cursor: not-allowed;
+}
+
 .stockexchange_button-noMinWidth {
   min-width: 0;
 }
@@ -595,38 +599,36 @@ table {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   vertical-align: middle;
+  padding-top: 10px;
 }
 
-.stockexchange_input, .stockexchange_input-disabled {
-  width: auto;
+.stockexchange_label, .stockexchange_label-disabled {
   min-width: 200px;
   display: block;
   border: 0;
-  padding: 4px 8px;
   border-radius: 4px;
   font-size: 1rem;
   background-color: #686;
   background-color: rgba(102, 136, 102, 0.8);
   color: #DDD;
+  padding: 4px 4px;
+  font-weight: bold;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
-.stockexchange_input:hover, .stockexchange_input-disabled:hover {
-  cursor: pointer;
-  background-color: #464;
-}
-
-.stockexchange_input-disabled {
+.stockexchange_label-disabled {
   background-color: #777;
   color: #afafaf;
 }
 
-.stockexchange_input-disabled:hover {
+.stockexchange_label-disabled:hover {
   background-color: #777;
   color: #afafaf;
   cursor: not-allowed;
 }
 
-.stockexchange_input-text, .stockexchange_input-text-disabled {
+.stockexchange_input, .stockexchange_input-disabled {
   border: 0;
   background-color: #ECC;
   background-color: rgba(255, 240, 240, 0.8);
@@ -638,12 +640,12 @@ table {
   font-size: 1rem;
 }
 
-.stockexchange_input-text-disabled {
+.stockexchange_input-disabled {
   background-color: #999;
   color: #ddd;
 }
 
-.stockexchange_input-text-disabled:hover {
+.stockexchange_input-disabled:hover {
   cursor: not-allowed;
 }
 /*# sourceMappingURL=main.css.map */

@@ -146,9 +146,9 @@
                         <!-- Cannot afford 1 stock -->
                         <div style="display: none" data-bind="visible: $root.bank().balance() < stockValue()">
                             <div class="stockexchange_field">
-                                <label class="stockexchange_input-disabled">
+                                <label class="stockexchange_label-disabled">
                                     Amount
-                                    <input disabled="disabled" class="stockexchange_input-text-disabled" type="text" value="1" />
+                                    <input disabled="disabled" class="stockexchange_input-disabled" type="text" value="1" />
                                 </label>
                             </div>
                             <div class="stockexchange_field">
@@ -158,9 +158,9 @@
                         <!-- Can afford 1 stock -->
                         <div style="display: none" data-bind="visible: $root.bank().balance() >= stockValue()">
                             <div class="stockexchange_field">
-                                <label class="stockexchange_input">
+                                <label class="stockexchange_label">
                                     Amount
-                                    <input class="stockexchange_input-text" type="text" data-bind="textInput: $parent.stockAmountToBuy" />
+                                    <input class="stockexchange_input" type="text" data-bind="textInput: $parent.stockAmountToBuy" />
                                 </label>
                             </div>
                             <div class="stockexchange_field">
