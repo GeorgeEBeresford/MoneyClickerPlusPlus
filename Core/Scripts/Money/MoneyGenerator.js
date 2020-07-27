@@ -87,6 +87,8 @@ MoneyGenerator.create = function (player) {
     moneyGenerator.baseCashPerClick(1);
     moneyGenerator.boostExpires(new Date(0));
 
+    moneyGenerator.generateIncome();
+
     return moneyGenerator;
 }
 
@@ -108,8 +110,26 @@ MoneyGenerator.restore = function (savedMoneyGenerator, player) {
     moneyGenerator.player(player);
     moneyGenerator.baseCashPerClick(savedMoneyGenerator.baseCashPerClick);
     moneyGenerator.boostExpires(new Date(savedMoneyGenerator.boostExpires));
+    
+    moneyGenerator.generateIncome();
 
     return moneyGenerator;
+}
+
+/**
+ * Generates income for the player every minute
+ */
+MoneyGenerator.prototype.generateIncome = function() {
+
+    var self = this;
+
+    setInterval(function() {
+
+        var moneyPerMinute = self.player().incomePerMinute();
+
+        self.player().bank().deposit(moneyPerMinute);
+
+    }, 60000);
 }
 
 /**

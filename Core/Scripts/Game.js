@@ -1,7 +1,6 @@
 window.addEventListener("load", function () {
 
     var game = Game.restore() || Game.create();
-    game.initialise();
 
     ko.applyBindings(game);
 })
@@ -72,6 +71,7 @@ Game.create = function () {
     game.persistentStorage(PersistentStorage.create(Game.persistentStoragePath));
     game.ticker(Ticker.create(game.player()));
     game.currentPanel(Game.defaultPanel);
+    game._initialise();
 
     return game;
 }
@@ -102,6 +102,7 @@ Game.restore = function () {
     game.persistentStorage(restoredPersistentStorage);
     game.ticker(restoredTicker);
     game.currentPanel(Game.defaultPanel);
+    game._initialise();
 
     return game;
 }
@@ -110,7 +111,7 @@ Game.restore = function () {
  * Initialises any objects that make up the current view model
  * @instance
  */
-Game.prototype.initialise = function () {
+Game.prototype._initialise = function () {
 
     this.persistentStorage().setWatchedObject(this);
     this.moneyGenerator().watchCurrentTime();

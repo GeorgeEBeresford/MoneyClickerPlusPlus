@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <link async="async" rel="stylesheet" href="/core/styles/main.css?v1.0" />
     <title>Money Clicker++</title>
 </head>
 
@@ -26,7 +27,7 @@
                     <div class="content_display">Balance: <span class="content_display-cash"
                             data-bind="text: $root.player().bank().balancePreview()"></span></div>
                     <div class="content_display">Income: <span class="content_display-cash"
-                            data-bind="text: '$' + $root.player().getStockIncomePerMinute().toFixed(2) + ' per minute'"></span>
+                            data-bind="text: '$' + $root.player().incomePerMinute().toFixed(2) + ' per minute'"></span>
                     </div>
                 </div>
             </div>
@@ -358,19 +359,18 @@
             </div>
         </section>
     </main>
-    <link rel="stylesheet" href="core/styles/main.css" />
-    <script src="core/scripts/common/polyfill.js"></script>
-    <script src="core/scripts/common/knockout.js"></script>
-    <script src="core/scripts/common/mathslibrary.js"></script>
-    <script src="core/scripts/common/gameconfig.js"></script>
-    <script src="core/scripts/companies/stockexchange.js"></script>
-    <script src="core/scripts/companies/company.js"></script>
-    <script src="core/scripts/companies/ticker.js"></script>
-    <script src="core/scripts/money/bank.js"></script>
-    <script src="core/scripts/money/moneygenerator.js"></script>
-    <script src="core/scripts/player/player.js"></script>
-    <script src="core/scripts/persistentstorage.js"></script>
-    <script src="core/scripts/game.js"></script>
+    <script async="async" src="/core/scripts/common/polyfill.js"></script>
+    <script async="async" src="/core/scripts/common/knockout.js"></script>
+    <script async="async" src="/core/scripts/common/mathslibrary.js"></script>
+    <script async="async" src="/core/scripts/common/gameconfig.js"></script>
+    <script async="async" src="/core/scripts/companies/stockexchange.js"></script>
+    <script async="async" src="/core/scripts/companies/company.js"></script>
+    <script async="async" src="/core/scripts/companies/ticker.js"></script>
+    <script async="async" src="/core/scripts/money/bank.js"></script>
+    <script async="async" src="/core/scripts/money/moneygenerator.js"></script>
+    <script async="async" src="/core/scripts/player/player.js"></script>
+    <script async="async" src="/core/scripts/persistentstorage.js"></script>
+    <script async="async" src="/core/scripts/game.js"></script>
 </body>
 
 </html>

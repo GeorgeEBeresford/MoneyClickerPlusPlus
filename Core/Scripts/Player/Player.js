@@ -45,6 +45,18 @@ function Player() {
     
         return dividends;
     });
+
+    /**
+     * Keeps track of the player's current total income per minute
+     * @type {KnockoutComputed<Number>}
+     */
+    this.incomePerMinute = ko.computed(function() {
+
+        var incomePerMinute = self.getStockIncomePerMinute();
+        var flooredIncome = MathsLibrary.floor(incomePerMinute, 2);
+
+        return flooredIncome;
+    });
 }
 
 /**
