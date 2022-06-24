@@ -1,351 +1,426 @@
 .stockexchange {
 
-    display: inline-block;
+    display: block;
     background-color: #242424;
-    width: 75%;
     margin-top: 20px;
     padding: 20px 4px;
     min-width: 452px;
     border-radius: 8px;
+}
 
-    &_title {
+.stockexchange_title {
 
-        font-weight: bold;
-        font-size: 1.3rem;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
 
-        &-subtitle {
+.stockexchange_title-subtitle {
 
-            font-size: 1.2rem;
-            color: #DDD;
-        }
+    font-size: 1.2rem;
+    color: #DDD;
+}
+
+.stockexchange_graph {
+
+    border: 2px solid #A84;
+    height: 300px;
+    background-color: #ECC;
+    background-color: rgba(255, 240, 240, 0.8);
+    color: #444;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 4px;
+    text-align: right;
+}
+
+.stockexchange_graph_labels-Y {
+
+    height: 300px;
+    padding: 10px;
+    display: inline-block;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.stockexchange_graph_labels-X {
+
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    position: relative;
+    text-align: left;
+    height: 1rem;
+}
+
+.stockexchange_graph_label-Y {
+
+    height: 12%;
+    display: block;
+    position: absolute;
+    min-width: 20px;
+}
+
+.stockexchange_graph_label-X {
+
+    position: absolute;
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+}
+
+.stockexchange_graph_label-axisY {
+
+    padding-top: 140px;
+    box-sizing: border-box;
+}
+
+.stockexchange_graph_label-axisX {
+
+    padding-top: 10px;
+    box-sizing: border-box;
+}
+
+.stockexchange_graph_trace {
+
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.stockexchange_graph_trace-Y {
+
+    width: 100%;
+    height: 1px;
+    border-top: 1px solid #242424;
+    opacity: 0.2;
+    position: absolute;
+}
+
+.stockexchange_graph_trace-X {
+
+    width: 1px;
+    height: 100%;
+    border-left: 1px solid #242424;
+    opacity: 0.2;
+    position: absolute;
+}
+
+.stockexchange_container {
+
+    position: relative;
+    padding-right: 16px;
+    box-sizing: border-box;
+}
+
+.stockexchange_point {
+
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: black;
+    border-radius: 100%;
+    z-index: 3;
+}
+
+.stockexchange_graph_trend {
+
+    fill: none;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke: rgba(0, 0, 0, 0.5);
+}
+
+.stockexchange_company {
+
+    display: inline-block;
+    padding: 8px 4px;
+    color: #6F6;
+    box-sizing: border-box;
+}
+
+.stockexchange_company-negative {
+
+    @extend .stockexchange_company;
+    color: #F66;
+}
+
+.stockexchange_company-none {
+
+    @extend .stockexchange_company;
+    color: #aaa;
+}
+
+.stockexchange_company_name {
+
+    display: block;
+    height: 26px;
+    padding-top: 4px;
+    padding-right: 8px;
+    box-sizing: border-box;
+    text-align: left;
+    float: left;
+
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
     }
+}
 
-    &_graph {
+.stockexchange_company_performance {
 
-        border: 2px solid #A84;
-        height: 300px;
-        background-color: #ECC;
-        background-color: rgba(255, 240, 240, 0.8);
-        color: #444;
-        font-size: 1rem;
-        position: relative;
-        overflow: hidden;
-        display: inline-block;
-        box-sizing: border-box;
-        width: 100%;
-        border-radius: 4px;
-        text-align: right;
+    display: block;
+    width: 20%;
+    height: 26px;
+    padding-top: 4px;
+    text-align: center;
+    font-weight: bold;
+    box-sizing: border-box;
+    float: right;
 
-        &_labels {
-
-            &-Y {
-
-                height: 300px;
-                padding: 10px;
-                display: inline-block;
-                box-sizing: border-box;
-                position: relative;
-            }
-
-            &-X {
-
-                width: 100%;
-                display: block;
-                box-sizing: border-box;
-                position: relative;
-                text-align: left;
-                height: 1rem;
-            }
-        }
-
-        &_label {
-
-            &-Y {
-
-                height: 12%;
-                display: block;
-                position: absolute;
-                min-width: 20px;
-            }
-
-            &-X {
-
-                position: absolute;
-                display: inline-block;
-                width: 10%;
-                vertical-align: middle;
-            }
-
-            &-axisY {
-
-                padding-top: 140px;
-                box-sizing: border-box;
-            }
-
-            &-axisX {
-
-                padding-top: 10px;
-                box-sizing: border-box;
-            }
-        }
-
-        &_trace {
-
-            top: 0;
-            left: 0;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-
-            &-Y {
-
-                width: 100%;
-                height: 1px;
-                border-top: 1px solid #242424;
-                opacity: 0.2;
-                position: absolute;
-            }
-
-            &-X {
-
-                width: 1px;
-                height: 100%;
-                border-left: 1px solid #242424;
-                opacity: 0.2;
-                position: absolute;
-            }
-        }
-
-        &_container {
-
-            position: relative;
-            padding-right: 16px;
-            box-sizing: border-box;
-        }
-
-        &_point {
-
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background-color: black;
-            border-radius: 100%;
-            z-index: 3;
-        }
-
-        &_trend {
-
-            fill: none;
-            stroke-width: 1;
-            stroke-linecap: round;
-            stroke: rgba(0, 0, 0, 0.5);
-        }
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
     }
+}
 
-    &_company {
+.stockexchange_company_buttoncontainer {
 
-        display: inline-block;
-        padding: 8px 4px;
-        color: #6F6;
-        box-sizing: border-box;
+    display: block;
+    width: 20%;
+    float: right;
+}
 
-        &-negative {
+.stockexchange_button {
 
-            @extend .stockexchange_company;
-            color: #F66;
-        }
+    display: block;
+    min-width: 250px;
+    padding: 4px 8px;
+    border: 0;
+    box-sizing: border-box;
+    text-align: center;
+    color: #ddd;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 4px;
+    background-color: #777;
+    color: #afafaf;
 
-        &-none {
+    &:hover {
 
-            @extend .stockexchange_company;
-            color: #aaa;
-        }
-
-        &_name {
-
-            padding-right: 8px;
-            box-sizing: border-box;
-        }
-
-        &_performance {
-
-            text-align: center;
-            font-weight: bold;
-            box-sizing: border-box;
-        }
+        cursor: not-allowed;
     }
+}
 
-    &_button {
+.stockexchange_button-noMinWidth {
 
-        min-width: 250px;
-        padding: 4px 8px;
-        border: 0;
-        box-sizing: border-box;
-        text-align: center;
-        color: #ddd;
-        font-weight: bold;
-        font-size: 1rem;
-        border-radius: 4px;
+    @extend .stockexchange_button;
+    min-width: 0;
+}
+
+.stockexchange_button-thick {
+
+    @extend .stockexchange_button;
+    height: 80px;
+}
+
+.stockexchange_button-action {
+
+    @extend .stockexchange_button;
+    background-color: #686;
+    color: #ddd;
+
+    &:hover {
+
+        cursor: pointer;
+        background-color: #464;
+    }
+}
+
+.stockexchange_button-action-noMinWidth {
+
+    @extend .stockexchange_button-action;
+    min-width: 0;
+}
+
+.stockexchange_button-action-thick {
+
+    @extend .stockexchange_button-action;
+    height: 80px;
+}
+
+.stockexchange_button-link {
+
+    display: block;
+    width: 100%;
+    padding: 4px 8px;
+    border: 0;
+    box-sizing: border-box;
+    text-align: center;
+    color: #ddd;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 4px;
+    background-color: #A84;
+    color: #ddd;
+
+    &:hover {
+
+        cursor: pointer;
+        background-color: #770;
+    }
+}
+
+.stockexchange_button-link-noMinWidth {
+
+    @extend .stockexchange_button-link;
+    min-width: 0;
+}
+
+.stockexchange_button-link-thick {
+
+    @extend .stockexchange_button-link;
+    height: 80px;
+}
+
+.stockexchange_button-danger {
+
+    @extend .stockexchange_button;
+    background-color: #F66;
+    color: #ddd;
+
+    &:hover {
+
+        cursor: pointer;
+        background-color: rgb(194, 75, 75);
+    }
+}
+
+.stockexchange_button-danger-noMinWidth {
+
+    @extend .stockexchange_button-danger;
+    min-width: 0;
+}
+
+.stockexchange_button-danger-thick {
+
+    @extend .stockexchange_button-danger;
+    height: 80px;
+}
+
+.stockexchange_row {
+
+    margin-top: 20px;
+}
+
+.stockexchange_field {
+
+    display: inline-block;
+    padding-left: 8px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    padding-top: 10px;
+}
+
+.stockexchange_label {
+
+    min-width: 200px;
+    display: block;
+    border: 0;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #686;
+    background-color: rgba(102, 136, 102, 0.8);
+    color: #DDD;
+    padding: 4px 4px;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.stockexchange_label-disabled {
+
+    @extend .stockexchange_label;
+    background-color: #777;
+    color: #afafaf;
+
+    &:hover {
+
         background-color: #777;
         color: #afafaf;
+        cursor: not-allowed;
+    }
+}
 
-        &:hover {
+.stockexchange_input {
 
-            cursor: not-allowed;
-        }
+    border: 0;
+    background-color: #ECC;
+    background-color: rgba(255, 240, 240, 0.8);
+    color: #444;
+    border-radius: 2px;
+    padding: 2px 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
 
-        &-noMinWidth {
+.stockexchange_input-disabled {
 
-            @extend .stockexchange_button;
-            min-width: 0;
-        }
+    @extend .stockexchange_input;
+    background-color: #999;
+    color: #ddd;
 
-        &-thick {
+    &:hover {
 
-            @extend .stockexchange_button;
-            height: 80px;
-        }
+        cursor: not-allowed;
+    }
+}
 
-        &-action {
+@media only screen and (max-width: 780px) {
 
-            @extend .stockexchange_button;
-            background-color: #686;
-            color: #ddd;
+    .stockexchange {
 
-            &:hover {
-
-                cursor: pointer;
-                background-color: #464;
-            }
-
-            &-noMinWidth {
-
-                @extend .stockexchange_button-action;
-                min-width: 0;
-            }
-
-            &-thick {
-
-                @extend .stockexchange_button-action;
-                height: 80px;
-            }
-        }
-
-        &-link {
-
-            @extend .stockexchange_button;
-            background-color: #A84;
-            color: #ddd;
-
-            &:hover {
-
-                cursor: pointer;
-                background-color: #770;
-            }
-
-            &-noMinWidth {
-
-                @extend .stockexchange_button-link;
-                min-width: 0;
-            }
-
-            &-thick {
-
-                @extend .stockexchange_button-link;
-                height: 80px;
-            }
-        }
-
-        &-danger {
-
-            @extend .stockexchange_button;
-            background-color: #F66;
-            color: #ddd;
-
-            &:hover {
-
-                cursor: pointer;
-                background-color: rgb(194, 75, 75);
-            }
-
-            &-noMinWidth {
-
-                @extend .stockexchange_button-danger;
-                min-width: 0;
-            }
-
-            &-thick {
-
-                @extend .stockexchange_button-danger;
-                height: 80px;
-            }
-        }
+        background: none;
+        text-align: left;
     }
 
-    &_row {
+    .stockexchange_company {
 
-        margin-top: 20px;
+        background-color: #242424;
+        display: inline-block;
+        width: 48%;
+        margin-right: 1%;
+        margin-top: 8px;
+        text-align: center;
+        padding: 8px;
+        border-radius: 4px;
     }
 
-    &_field {
+    .stockexchange_company_name {
 
         display: inline-block;
-        padding-left: 8px;
-        box-sizing: border-box;
-        vertical-align: middle;
-        padding-top: 10px;
-    }
-
-    &_label {
-
-        min-width: 200px;
-        display: block;
-        border: 0;
-        border-radius: 4px;
-        font-size: 1rem;
-        background-color: #686;
-        background-color: rgba(102, 136, 102, 0.8);
-        color: #DDD;
-        padding: 4px 4px;
+        padding-bottom: 8px;
+        width: 80%;
+        text-align: center;
         font-weight: bold;
-        box-sizing: border-box;
-
-        &-disabled {
-
-            @extend .stockexchange_label;
-            background-color: #777;
-            color: #afafaf;
-
-            &:hover {
-
-                background-color: #777;
-                color: #afafaf;
-                cursor: not-allowed;
-            }
-        }
     }
 
-    &_input {
+    .stockexchange_company_performance {
 
-        border: 0;
-        background-color: #ECC;
-        background-color: rgba(255, 240, 240, 0.8);
-        color: #444;
-        border-radius: 2px;
-        padding: 2px 8px;
-        box-sizing: border-box;
-        font-size: 1rem;
+        display: inline-block;
+        width: 80%;
+        font-weight: normal;
+    }
 
-        &-disabled {
+    .stockexchange_button {
 
-            @extend .stockexchange_input;
-            background-color: #999;
-            color: #ddd;
-
-            &:hover {
-
-                cursor: not-allowed;
-            }
-        }
+        margin-top: 8px;
+        width: 100%;
     }
 }

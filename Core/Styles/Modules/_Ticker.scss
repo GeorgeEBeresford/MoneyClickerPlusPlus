@@ -7,47 +7,63 @@
     padding: 4px;
     min-width: 452px;
     border-radius: 8px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
 
     &:hover {
 
         cursor: default;
     }
+}
 
-    &_company {
+.ticker_company {
 
-        display: inline-block;
-        width: 100%;
-        padding: 8px 4px;
-        color: #6F6;
-        box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+    padding: 8px 4px;
+    color: #6F6;
+    box-sizing: border-box;
+}
 
-        &-negative {
+.ticker_company-negative {
 
-            @extend .ticker_company;
-            color: #F66;
-        }
+    @extend .ticker_company;
+    color: #F66;
+}
 
-        &-none {
+.ticker_company-none {
 
-            @extend .ticker_company;
-            color: #aaa;
-        }
+    @extend .ticker_company;
+    color: #aaa;
+}
 
-        &_name {
+.ticker_company_name {
 
-            padding-right: 8px;
-            width: 80%;
-            box-sizing: border-box;
-            display: inline-block;
-            text-align: left;
-        }
+    padding-right: 8px;
+    width: 80%;
+    box-sizing: border-box;
+    display: block;
+    text-align: left;
+    float: left;
 
-        &_performance {
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
 
-            width: 19%;
-            display: inline-block;
-            text-align: right;
-            font-weight: bold;
-        }
+.ticker_company_performance {
+
+    width: 20%;
+    display: block;
+    text-align: right;
+    font-weight: bold;
+    float: left;
+
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
     }
 }

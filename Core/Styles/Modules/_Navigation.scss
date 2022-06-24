@@ -1,44 +1,53 @@
-.navigationbar {
+.navigationbar_options {
 
-    &_options {
+    width: 100%;
+    box-sizing: border-box;
+    padding-top: 0;
+}
 
-        width: 100%;
-        box-sizing: border-box;
-        padding-top: 0;
+.navigationbar_option {
+
+    width: 100%;
+    display: block;
+    padding: 8px 4px;
+    border-top: 1px solid #631;
+    background-color: #A84;
+    box-sizing: border-box;
+    text-align: center;
+    color: #ddd;
+    font-weight: bold;
+    font-size: 1rem;
+    
+    &:hover {
+        cursor: pointer;
+        background-color: #770;
     }
+}
 
-    &_option {
+.navigationbar_option_linkContainer {
 
-        width: 100%;
-        display: block;
-        padding: 8px 4px;
-        border-top: 1px solid #631;
-        background-color: #A84;
-        box-sizing: border-box;
-        text-align: center;
-        color: #ddd;
-        font-weight: bold;
-        font-size: 1rem;
+    @extend .navigationbar_option;
+    padding: 0;
+}
 
-        &-home {
-            
-            @extend .navigationbar_option;
-            width: 100%;
-            padding: 20%;
-            background-image: url("core/images/navbar-heading.jpg");
-            background-repeat: no-repeat;
-            background-size: cover;
+.navigationbar_option_link {
+    
+    padding: 8px 4px;
+    text-decoration: none;
+    color: #ddd;
+    display: block;
+}
 
-            &:hover {
+.navigationbar_option-home {
+    
+    @extend .navigationbar_option;
+    width: 100%;
+    padding: 20%;
+    background-image: url("../../core/images/navbar-heading.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 
-                opacity: 0.8;
-            }
-        }
-
-        &:hover {
-
-            cursor: pointer;
-            background-color: #770;
-        }
+    &:hover {
+        opacity: 0.8;
     }
 }

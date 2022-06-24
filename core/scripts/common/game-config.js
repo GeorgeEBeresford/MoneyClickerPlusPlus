@@ -1,5 +1,5 @@
-gameConfig = {
-
+"use strict";
+var gameConfig = {
     defaultCompanies: [
         {
             companyName: "Electronic Poptarts",
@@ -57,4 +57,5 @@ gameConfig = {
             stockValue: 285.86
         }
     ]
-}
+};
+//# sourceMappingURL=game-config.js.map
