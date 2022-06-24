@@ -123,8 +123,6 @@
                             </div>
                         </div>
                     </div>
-                    <div>Test</div>
-                    <div data-bind="text: valueHistory().length"></div>
                     <div class="stockexchange_row stockexchange_graph_container">
                         <ul class="stockexchange_graph_labels-Y content_side-ten content_align_top" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
                             <li class="stockexchange_graph_label-Y" data-bind="text: '$' + $parent.historicValuesAscendingOrder()[$data].toFixed(2), style: { bottom: -8.5 + $data * 10 + '%' }"></li>
