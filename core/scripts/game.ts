@@ -65,7 +65,7 @@ class Game {
             const savedMoneyGenerator = MoneyGenerator.restore(savedGame.moneyGenerator, savedPlayer);
             const savedTicker = Ticker.restore(savedGame.ticker, savedPlayer);
             const game = new Game(savedPlayer, savedMoneyGenerator, savedTicker)
-            
+
             game.currentPanel(savedGame.currentPanel);
             return game;
         }

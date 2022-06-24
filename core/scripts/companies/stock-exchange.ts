@@ -32,7 +32,7 @@ class StockExchange {
     /**
      * The number of units of stock that the player wishes to buy
      */
-    public readonly stockAmountToBuy: ko.Observable<number>;
+    public readonly stockAmountToBuy: ko.Observable<string>;
 
     /**
      * The calculated cost of buying the specified number of stock units
@@ -82,7 +82,7 @@ class StockExchange {
         })
 
         this.selectedCompany = ko.observable(null);
-        this.stockAmountToBuy = ko.observable(1);
+        this.stockAmountToBuy = ko.observable("1");
         this.priceToBuyStock = ko.computed(() => {
 
             const company = this.selectedCompany();
@@ -91,8 +91,12 @@ class StockExchange {
                 return 0;
             }
 
-            var stockAmount = this.stockAmountToBuy();
-            var price = stockAmount * company.stockValue();
+            if (isNaN(+this.stockAmountToBuy())){
+
+                return 0;
+            }
+
+            var price = +this.stockAmountToBuy() * company.stockValue();
 
             return MathsLibrary.round(price, 2);
         });
@@ -156,16 +160,21 @@ class StockExchange {
             return false;
         }
 
+        if (isNaN(+this.stockAmountToBuy())){
+
+            return false;
+        }
+
         var ownedStock = playerStockCollection[company.companyName()];
 
-        if (ownedStock.amount < this.stockAmountToBuy()) {
+        if (ownedStock.amount < +this.stockAmountToBuy()) {
 
             return false;
         }
 
         var totalStockvalue = this.priceToBuyStock();
 
-        ownedStock.amount -= this.stockAmountToBuy()
+        ownedStock.amount -= +this.stockAmountToBuy()
 
         // Since we no longer own any of these stocks, we can safely discard this
         if (ownedStock.amount === 0) {
@@ -193,6 +202,10 @@ class StockExchange {
             return false;
         }
 
+        if (isNaN(+this.stockAmountToBuy())){
+
+            return false;
+        }
 
         var playerStockCollection = this.player().purchasedStock();
         var company = this.selectedCompany();
@@ -213,7 +226,7 @@ class StockExchange {
             };
         }
 
-        ownedStock.amount += this.stockAmountToBuy();
+        ownedStock.amount += +this.stockAmountToBuy();
 
         // Let the knockout binding know there has been a change
         this.player().purchasedStock(this.player().purchasedStock());
@@ -233,7 +246,7 @@ class StockExchange {
 
             companies: this.companies().filter(company => !company.isSystemOwned).map(company => company.toJSON()),
             selectedCompany: company !== null ? company.companyName() : null,
-            stockToBuy: this.stockAmountToBuy()
+            stockToBuy: !isNaN(+this.stockAmountToBuy()) ? +this.stockAmountToBuy() : 0
         };
     }
 }

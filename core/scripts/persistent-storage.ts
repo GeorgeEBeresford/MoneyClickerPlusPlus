@@ -18,7 +18,7 @@ class PersistentStorage {
     /**
      * Sets the default number of seconds between saves, when none have been set by the player
      */
-    private static readonly defaultTimeBetweenSaves = 1
+    private static readonly defaultTimeBetweenSaves = 10;
 
     /**
      * The currently watched object
@@ -75,11 +75,19 @@ class PersistentStorage {
     public static restore(): PersistentStorage {
 
         const savedPersistentStorage = PersistentStorage.getDataFromStorage();
-        const game = Game.restore(savedPersistentStorage.game);
-        var persistentStorage = new PersistentStorage(game);
 
-        persistentStorage.delayBetweenSaves(savedPersistentStorage.delayBetweenSaves ?? PersistentStorage.defaultTimeBetweenSaves);
-        persistentStorage.lastSavedOn(new Date(savedPersistentStorage.lastSavedOn != null ? savedPersistentStorage.lastSavedOn : 0));
+        if (savedPersistentStorage !== null){
+
+            const game = Game.restore(savedPersistentStorage.game);
+            var persistentStorage = new PersistentStorage(game);
+    
+            persistentStorage.delayBetweenSaves(savedPersistentStorage.delayBetweenSaves);
+            persistentStorage.lastSavedOn(new Date(savedPersistentStorage.lastSavedOn));
+            return persistentStorage;
+        }
+
+        const game = Game.restore(null);
+        var persistentStorage = new PersistentStorage(game);
 
         return persistentStorage;
     }
@@ -145,15 +153,13 @@ class PersistentStorage {
      * Retrieves the latest saved data from the LocalStorage
      * @returns the latest saved data from the LocalStorage
      */
-    private static getDataFromStorage(): ISavablePersistentStorage {
+    private static getDataFromStorage(): ISavablePersistentStorage | null {
 
         var localStorage = window.localStorage;
         var serializedSave = localStorage.getItem(PersistentStorage.storagePath);
         
         if (serializedSave === null){
-
-            console.error("Nothing saved. Cannot parse null");
-            throw "Nothing saved. Cannot parse null";
+            return null;
         }
 
         let savedPersistentStorage = JSON.parse(serializedSave) as ISavablePersistentStorage;
@@ -211,7 +217,10 @@ class PersistentStorage {
     }
 }
 
-var persistentStorage = PersistentStorage.restore();
-persistentStorage.watchForGameChanges();
+window.addEventListener("load", () => {
 
-ko.applyBindings(persistentStorage.watchedGame);
+    var persistentStorage = PersistentStorage.restore();
+    persistentStorage.watchForGameChanges();
+    
+    ko.applyBindings(persistentStorage.watchedGame);
+});

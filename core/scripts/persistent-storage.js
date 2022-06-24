@@ -27,12 +27,16 @@ class PersistentStorage {
      * @returns the restored PersistentStorage
      */
     static restore() {
-        var _a;
         const savedPersistentStorage = PersistentStorage.getDataFromStorage();
-        const game = Game.restore(savedPersistentStorage.game);
+        if (savedPersistentStorage !== null) {
+            const game = Game.restore(savedPersistentStorage.game);
+            var persistentStorage = new PersistentStorage(game);
+            persistentStorage.delayBetweenSaves(savedPersistentStorage.delayBetweenSaves);
+            persistentStorage.lastSavedOn(new Date(savedPersistentStorage.lastSavedOn));
+            return persistentStorage;
+        }
+        const game = Game.restore(null);
         var persistentStorage = new PersistentStorage(game);
-        persistentStorage.delayBetweenSaves((_a = savedPersistentStorage.delayBetweenSaves) !== null && _a !== void 0 ? _a : PersistentStorage.defaultTimeBetweenSaves);
-        persistentStorage.lastSavedOn(new Date(savedPersistentStorage.lastSavedOn != null ? savedPersistentStorage.lastSavedOn : 0));
         return persistentStorage;
     }
     /**
@@ -84,8 +88,7 @@ class PersistentStorage {
         var localStorage = window.localStorage;
         var serializedSave = localStorage.getItem(PersistentStorage.storagePath);
         if (serializedSave === null) {
-            console.error("Nothing saved. Cannot parse null");
-            throw "Nothing saved. Cannot parse null";
+            return null;
         }
         let savedPersistentStorage = JSON.parse(serializedSave);
         // Make sure the storage structure is up-to-date before we continue
@@ -138,8 +141,10 @@ PersistentStorage.storagePath = "moneyclicker++/savegame";
 /**
  * Sets the default number of seconds between saves, when none have been set by the player
  */
-PersistentStorage.defaultTimeBetweenSaves = 1;
-var persistentStorage = PersistentStorage.restore();
-persistentStorage.watchForGameChanges();
-ko.applyBindings(persistentStorage.watchedGame);
+PersistentStorage.defaultTimeBetweenSaves = 10;
+window.addEventListener("load", () => {
+    var persistentStorage = PersistentStorage.restore();
+    persistentStorage.watchForGameChanges();
+    ko.applyBindings(persistentStorage.watchedGame);
+});
 //# sourceMappingURL=persistent-storage.js.map

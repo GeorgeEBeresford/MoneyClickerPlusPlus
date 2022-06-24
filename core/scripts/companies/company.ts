@@ -172,6 +172,12 @@ class Company {
         company.lastUpdated(new Date(0));
         company.companyName(systemCompany.companyName);
 
+        // Add some initial changes to the company so we have some initial graph data to work with
+        for (let index = 0; index < Company.maxHistoryLength; index++){
+
+            company.makeRandomChange();
+        }
+
         return company;
     }
 
