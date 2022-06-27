@@ -4,10 +4,20 @@
 interface ISavableCompany {
     
     companyName: string;
-    stockYield: number;
-    stockValue: number;
+    industry: string;
+    stockType: number;
     lastUpdated: string;
-    valueHistory: Array<number>;
+    currentValue: number;
+    audits: Array<ICompanyValueChange>;
+}
+
+/**
+ * Represents a change to how much the company is worth
+ */
+interface ICompanyValueChange {
+
+    pricePerStock: number;
+    percentageChange: number;
 }
 
 /**
@@ -26,19 +36,19 @@ class Company {
     public readonly companyName: ko.Observable<string>;
 
     /**
-     * The yield type of the company's stock (0 = none, 1 = very low, 2 = low, 3 = medium, 4 = large, 5 = very large)
+     * The type of industry for the current company
      */
-    public readonly stockYield: ko.Observable<number>;
+    public readonly industry: ko.Observable<string>;
 
     /**
-     * The value of each unit of stock
+     * The type of stock the company has (0: No dividends, 1: Low dividend, 2: Medium dividend, 3: High dividend, 4: Very high dividend)
      */
-    public readonly stockValue: ko.Observable<number>;
+    public readonly stockType: ko.Observable<number>;
 
     /**
      * A history of recent changes to the values of each company
      */
-    public readonly valueHistory: ko.ObservableArray<number>;
+    public readonly audits: ko.ObservableArray<ICompanyValueChange>;
 
     /**
      * The date that the company was last updated on
@@ -51,6 +61,11 @@ class Company {
     public readonly stockValueChange: ko.Computed<number>;
 
     /**
+     * Retrieves the latest figures for the company's value
+     */
+    public readonly latestAudit: ko.Computed<ICompanyValueChange>;
+
+    /**
      * Calculates the current trend of the company in the stock market
      */
     public readonly valueHistoryTrend: ko.Computed<string>;
@@ -58,7 +73,7 @@ class Company {
     /**
      * The company's historic values ordered by lowest to highest (the company's current value is included in this)
      */
-    public readonly historicValuesAscendingOrder: ko.Computed<Array<number>>;
+    public readonly historicValuesAscendingOrder: ko.Computed<Array<ICompanyValueChange>>;
 
     /**
      * A string which describes the quality of the company's dividends
@@ -71,6 +86,16 @@ class Company {
     public readonly isSystemOwned: boolean;
 
     /**
+     * How much the company is currently worth
+     */
+    public readonly currentValue: ko.Observable<number>;
+
+    /**
+     * Calculates the price of a single stock for the current company
+     */
+    public readonly pricePerStock: ko.Computed<number>;
+
+    /**
      * Creates a new Company
      * @param isSystemOwned - Whether the company is owned by the application
      */
@@ -78,42 +103,52 @@ class Company {
         
         this.isSystemOwned = isSystemOwned;
         this.companyName = ko.observable("");
-        this.stockYield = ko.observable(0);
-        this.stockValue = ko.observable(0);
-        this.valueHistory = ko.observableArray([] as Array<number>);
+        this.industry = ko.observable("");
+        this.stockType = ko.observable(0);
+        this.audits = ko.observableArray([] as Array<ICompanyValueChange>);
         this.lastUpdated = ko.observable(new Date(0));
+        this.currentValue = ko.observable(0);
+        this.latestAudit = ko.computed(() => {
+
+            const audits = this.audits();
+            const latestAudit = audits[audits.length - 1];
+
+            return latestAudit;
+        })
+
         this.stockValueChange = ko.computed(() => {
 
-            if (this.valueHistory().length < 2) {
+            const audit = this.audits();
+            if (audit.length < 2) {
 
                 return 0;
             }
 
-            var oldestValue = this.valueHistory()[0];
-            var difference = this.stockValue() - oldestValue;
+            const oldestValue = audit[0].pricePerStock;
+            const latestValue = audit[audit.length - 1].pricePerStock;
+
+            const difference = latestValue - oldestValue;
 
             return difference;
         });
 
         this.historicValuesAscendingOrder = ko.computed(() => {
 
-            var historyBuffer = this.valueHistory().slice(0);
-            
-            var uniqueValues: Array<number> = [];
+            const audits = this.audits();
+            const uniqueValues: Array<ICompanyValueChange> = [];
 
-            historyBuffer.forEach(historicValue => {
+            audits.forEach(auditedChange => {
 
-                var isUnique = uniqueValues.indexOf(historicValue) === -1;
-
+                const isUnique = uniqueValues.find(value => value.pricePerStock === auditedChange.pricePerStock) === undefined;
                 if (isUnique) {
 
-                    uniqueValues.push(historicValue);
+                    uniqueValues.push(auditedChange);
                 }
             });
 
-            var orderedValues = uniqueValues.sort(function(previousValue, currentValue) {
+            const orderedValues = uniqueValues.sort(function(previousChange, currentChange) {
 
-                return previousValue - currentValue;
+                return previousChange.pricePerStock - currentChange.pricePerStock;
             });
 
             return orderedValues;
@@ -121,38 +156,84 @@ class Company {
 
         this.valueHistoryTrend = ko.computed(() => {
 
-            var trendPoints: Array<string> = [];
+            const trendPoints: Array<string> = [];
+            const uniqueChanges = this.historicValuesAscendingOrder();
 
-            this.valueHistory().forEach((historicValue, valueIndex) => {
+            this.audits().forEach((auditedChange, valueIndex) => {
                 
-                var indexOfValue = this.historicValuesAscendingOrder().indexOf(historicValue);
+                const matchingValue = uniqueChanges.find(uniqueChange => uniqueChange.pricePerStock === auditedChange.pricePerStock);
 
-                var coordinateX = valueIndex * 10;
-                var coordinateY = 100 - (indexOfValue * 10);
+                if (matchingValue !== undefined){
 
-                trendPoints.push(coordinateX + "," + coordinateY)
+                    const indexOfValue = uniqueChanges.indexOf(matchingValue);
+                    const coordinateX = valueIndex * 10;
+                    const coordinateY = 100 - (indexOfValue * 10);
+    
+                    trendPoints.push(coordinateX + "," + coordinateY)
+                }
             });
 
-            var trend = trendPoints.join(" ");
-
+            const trend = trendPoints.join(" ");
             return trend;
         })
 
         this.dividendsDescriptor = ko.computed(() => {
 
-            switch (this.stockYield()){
+            const stockType = this.stockType();
+
+            switch (stockType){
 
                 case (0): return "no" as string;
-                case (1): return "very low";
-                case (2): return "low";
-                case (3): return "medium";
-                case (4): return "high";
-                case (5): return "very high";
+                case (1): return "low";
+                case (2): return "medium";
+                case (3): return "high";
+                case (4): return "very high";
 
                 default:
-                    console.error(`No descriptor for stockYield ${this.stockYield()}`);
-                    throw `No descriptor for stockYield ${this.stockYield()}`;
+                    console.error(`No descriptor for stockYield ${stockType}`);
+                    throw `No descriptor for stockYield ${stockType}`;
             }
+        });
+
+        this.pricePerStock = ko.computed(() => {
+           
+            const currentValue = this.currentValue();
+            const stockType = this.stockType();
+
+            let pricePerStock = 0;
+            switch(stockType) {
+
+                // No dividends
+                case 0:
+                    pricePerStock = MathsLibrary.round(currentValue / 850000000, 2);
+                    break;
+
+                // Low dividends
+                case 1:
+                    pricePerStock = MathsLibrary.round(currentValue / 1300000000, 2)
+                    break;
+
+                // Medium dividends
+                case 2:
+                    pricePerStock = MathsLibrary.round(currentValue / 2000000000, 2)
+                    break;
+
+                // High dividends
+                case 3:
+                    pricePerStock = MathsLibrary.round(currentValue / 400000000, 2);
+                    break;
+
+                // Very high dividends
+                case 4:
+                    pricePerStock = MathsLibrary.round(currentValue / 390000000, 2)
+                    break;
+
+                default:
+                    console.error(`Stock type ${stockType} is not configured. Can't calculate the price of purchasing 1 stock`);
+                    throw `Stock type ${stockType} is not configured. Can't calculate the price of purchasing 1 stock`;
+            }
+
+            return pricePerStock;
         });
 
         this.isSystemOwned = true;
@@ -167,10 +248,11 @@ class Company {
 
         const company = new Company(true);
 
-        company.stockYield(systemCompany.stockYield);
-        company.stockValue(systemCompany.stockValue);
-        company.lastUpdated(new Date(0));
         company.companyName(systemCompany.companyName);
+        company.industry(systemCompany.industry);
+        company.stockType(systemCompany.stockType);
+        company.lastUpdated(new Date(0));
+        company.currentValue(systemCompany.currentValue);
 
         // Add some initial changes to the company so we have some initial graph data to work with
         for (let index = 0; index < Company.maxHistoryLength; index++){
@@ -190,49 +272,19 @@ class Company {
 
         const company = new Company(false);
 
-        company.stockYield(savedCompany.stockYield);
-        company.stockValue(savedCompany.stockValue);
-        company.lastUpdated(new Date(savedCompany.lastUpdated));
         company.companyName(savedCompany.companyName);
+        company.industry(savedCompany.industry);
+        company.stockType(savedCompany.stockType);
+        company.lastUpdated(new Date(savedCompany.lastUpdated));
+        company.currentValue(savedCompany.currentValue);
 
-        return company;
-    }
+        // Add some initial changes to the company so we have some initial graph data to work with
+        for (let index = 0; index < Company.maxHistoryLength; index++){
 
-    /**
-     * Retrieves the number of stocks that a player owns for the current company
-     * @param player - The player we want to check the stock count for
-     * @returns the number of stocks that a player owns for the current company
-     */
-    public getPlayerStockCount(player: Player): number {
-
-        var purchasedStock = player.purchasedStock();
-        var investmentsInThisCompany = purchasedStock[this.companyName()];
-
-        const amount = investmentsInThisCompany !== undefined ? investmentsInThisCompany.amount : 0;
-        return amount;
-    }
-
-    /**
-     * Retrieves the profits the player has made since they purchased the stocks. The value of the stock when it was last purchased will be considered when checking the "original" value.
-     * @param player The player we want to check the stock profits for
-     * @returns the profits the player has made since they purchased the stocks
-     */
-    public getPlayerStockProfit(player: Player): number {
-
-        var purchasedStock = player.purchasedStock();
-        var investmentsInThisCompany = purchasedStock[this.companyName()];
-
-        if (typeof(investmentsInThisCompany) === "undefined" || investmentsInThisCompany.amount === 0) {
-
-            return 0;
+            company.makeRandomChange();
         }
 
-        var initialValue = investmentsInThisCompany.valueWhenPurchased;
-        var currentValue = this.stockValue();
-        var valueDifference = currentValue - initialValue;
-        var profit = (valueDifference / currentValue) * 100;
-
-        return profit;
+        return company;
     }
 
     /**
@@ -244,10 +296,11 @@ class Company {
         return {
 
             companyName: this.companyName(),
-            stockYield: this.stockYield(),
-            stockValue: this.stockValue(),
-            lastUpdated: this.lastUpdated().toISOString(),
-            valueHistory: this.valueHistory()
+            industry: this.industry(),
+            stockType: this.stockType(),
+            audits: this.audits(),
+            currentValue: this.currentValue(),
+            lastUpdated: this.lastUpdated().toISOString()
         };
     }
 
@@ -256,42 +309,40 @@ class Company {
      */
     public makeRandomChange(): void {
 
-        var noChangeRoll = MathsLibrary.getRandomNumber(0, 100);
+        const noChangeRoll = MathsLibrary.getRandomNumber(0, 100);
 
         if (noChangeRoll < 20) {
 
             // Archive the current value of the company
-            this.valueHistory.push(this.stockValue());
+            this.audits.push({ pricePerStock: this.pricePerStock(), percentageChange: 0 });
         }
         else
         {
-            var modificationIsLargeRoll = MathsLibrary.getRandomNumber(0, 100);
-            var modification = modificationIsLargeRoll < 0.0001 ? MathsLibrary.getRandomNumber(8, 10) : MathsLibrary.getRandomNumber(0.01, 0.75);
+            const modificationIsLargeRoll = MathsLibrary.getRandomNumber(0, 100);
+            let modification = modificationIsLargeRoll < 0.0001 ? MathsLibrary.getRandomNumber(10, 15) : MathsLibrary.getRandomNumber(0.2, 3);
     
-            var goodOrBadRoll = MathsLibrary.getRandomNumber(0, 100);
+            const goodOrBadRoll = MathsLibrary.getRandomNumber(0, 100);
             modification = goodOrBadRoll < 50 ? 0 - modification : modification;
+    
+            const roundedModification = MathsLibrary.round(modification, 2);
+
+            // Raise or decrease the stock value by a percentage, not the exact number
+            const currentValue = this.currentValue();
+            const roundedValue = MathsLibrary.round(currentValue + currentValue * (roundedModification / 100), 2);
+            this.currentValue(roundedValue);
+
+            const pricePerStock = this.pricePerStock();
+
+            // Add the change as an audit
+            this.audits.push({ pricePerStock: pricePerStock, percentageChange: roundedModification });
             
             this.lastUpdated(new Date());
-    
-            var roundedValue = MathsLibrary.round(this.stockValue() + modification, 2);
-    
-            // The game will be waaay too easy if we let the stock reach too low a value. For balance's sake, stop it from sinking too low.
-            if (roundedValue < this.stockYield() * 10.04) {
-    
-                roundedValue = this.stockYield() * 10.04;
-            }
-    
-            // Modify the value of the company
-            this.stockValue(roundedValue);
-    
-            // Archive the current value of the company
-            this.valueHistory.push(this.stockValue());
         }
 
         // The value history has a maximum number of records. Make sure we don't exceed it.
-        if (this.valueHistory().length > Company.maxHistoryLength) {
+        if (this.audits().length > Company.maxHistoryLength) {
             
-            this.valueHistory.shift();
+            this.audits.shift();
         }
     }
 }

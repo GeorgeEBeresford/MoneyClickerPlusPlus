@@ -34,8 +34,13 @@ class Ticker {
     public readonly companiesPreview: ko.Computed<Array<Company>>;
 
     /**
+     * Calculates the amount of money the current player is making per minute via the ticker's descendants
+     */
+    public readonly incomePerMinute: ko.Computed<number>;
+
+    /**
      * Creates a new Ticker
-     * @param player - A reference to the current player so we can track their owned stock // Todo - refactor this out of the Player object and into the StockExchange object
+     * @param stockExchange - The stock exchange which we'll use to keep track of stocks and stock values
      */
     constructor(stockExchange: StockExchange) {
         
@@ -44,12 +49,14 @@ class Ticker {
         this.stockExchange = ko.observable(stockExchange);
         this.companiesPreview = ko.computed(() => {
 
-            if (this.stockExchange() === null) {
+            const stockExchange = this.stockExchange();
+            if (stockExchange === null) {
 
                 return [];
             }
 
-            const companies = this.stockExchange().companies();
+            const maxPreviewedCompanies = this.maxPreviewedCompanies();
+            const companies = stockExchange.companies();
 
             const filteredCompanies = companies.filter((company) => {
 
@@ -59,10 +66,22 @@ class Ticker {
             const sortedCompanies = filteredCompanies.sort((previousCompany, currentCompany) => {
 
                 return currentCompany.lastUpdated().getTime() - previousCompany.lastUpdated().getTime();
-            })
+            });
 
-            return sortedCompanies.slice(0, this.maxPreviewedCompanies());
+            const preview = sortedCompanies.slice(0, maxPreviewedCompanies);
+
+            return preview;
         });
+        
+        this.incomePerMinute = ko.computed(() => {
+
+            const stockExchange = this.stockExchange();
+
+            // This will expand over time to other sources of income
+            const moneyFromDividendsPerMinute = stockExchange.stockIncomePerMinute();
+
+            return moneyFromDividendsPerMinute;
+        })
     }
 
     /**
@@ -75,7 +94,7 @@ class Ticker {
 
         if (savedTicker !== null){
 
-            const savedStockExchange = StockExchange.restore(savedTicker.stockExchange, player);
+            const savedStockExchange = StockExchange.restore(savedTicker.stockExchange);
             const ticker = new Ticker(savedStockExchange);
             ticker.maxPreviewedCompanies(savedTicker.maxPreviewedCompanies);
             ticker.tickerInterval(savedTicker.tickerInterval)
@@ -83,7 +102,7 @@ class Ticker {
             return ticker;
         }
 
-        const stockExchange = StockExchange.restore(null, player);
+        const stockExchange = StockExchange.restore(null);
         const ticker = new Ticker(stockExchange);
     
         return ticker;
@@ -109,9 +128,11 @@ class Ticker {
     public startTicking(): void {
             
         const tickerDelay = this.tickerInterval();
+        const stockExchange = this.stockExchange();
+
         const interval = setInterval(() => {
 
-            const companies = this.stockExchange().companies();
+            const companies = stockExchange.companies();
             companies.forEach(company => {
 
                 company.makeRandomChange();

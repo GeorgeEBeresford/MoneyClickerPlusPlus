@@ -7,8 +7,8 @@ class MoneyGenerator {
      * Creates a new MoneyGenerator
      * @param player - The player which the MoneyGenerator should create money for
      */
-    constructor(player) {
-        this.player = ko.observable(player);
+    constructor(bank) {
+        this.bank = ko.observable(bank);
         this.baseCashPerClick = ko.observable(1);
         this.boostExpires = ko.observable(new Date(0));
         this.boostedSecondsRemaining = ko.computed(() => {
@@ -30,29 +30,20 @@ class MoneyGenerator {
         this.cashPerClick = ko.computed(() => {
             return this.boostExpires() > new Date() ? this.baseCashPerClick() * 2 : this.baseCashPerClick();
         });
-        this.generateIncome();
     }
     /**
      * Restores a MoneyGenerator from JSON
      * @param savedMoneyGenerator - A JSON object representing the money generator
+     * @param bank - A reference to the bank which any money will be deposited into
      * @returns the restored MoneyGenerator
      */
-    static restore(savedMoneyGenerator, player) {
-        var moneyGenerator = new MoneyGenerator(player);
+    static restore(savedMoneyGenerator, bank) {
+        var moneyGenerator = new MoneyGenerator(bank);
         if (savedMoneyGenerator !== null) {
             moneyGenerator.baseCashPerClick(savedMoneyGenerator.baseCashPerClick);
             moneyGenerator.boostExpires(new Date(savedMoneyGenerator.boostExpires));
         }
         return moneyGenerator;
-    }
-    /**
-     * Generates income for the player every minute
-     */
-    generateIncome() {
-        setInterval(() => {
-            var moneyPerMinute = this.player().incomePerMinute();
-            this.player().bank().deposit(moneyPerMinute);
-        }, 60000);
     }
     /**
      * Creates a new JSON object representing the current object
@@ -79,7 +70,8 @@ class MoneyGenerator {
      * @param seconds - The number of seconds to boost the generator for
      */
     boostGenerator(seconds) {
-        var isWithdrawalSuccess = this.player().bank().tryWithdraw(this.getBoostCost(seconds));
+        const bank = this.bank();
+        var isWithdrawalSuccess = bank.tryWithdraw(this.getBoostCost(seconds));
         if (!isWithdrawalSuccess) {
             return;
         }
@@ -91,13 +83,16 @@ class MoneyGenerator {
      * Generates money out of thin air for the player
      */
     generateCash() {
-        this.player().bank().deposit(this.cashPerClick());
+        const bank = this.bank();
+        bank.deposit(this.cashPerClick());
     }
     /**
      * Upgrades the money generator to give 1 more currency per click
      */
     upgradeGenerator() {
-        var isWithdrawalSuccess = this.player().bank().tryWithdraw(this.upgradeCost());
+        const bank = this.bank();
+        const upgradeCost = this.upgradeCost();
+        var isWithdrawalSuccess = bank.tryWithdraw(upgradeCost);
         if (!isWithdrawalSuccess) {
             return;
         }

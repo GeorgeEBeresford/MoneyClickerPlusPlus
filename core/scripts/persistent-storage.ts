@@ -18,7 +18,7 @@ class PersistentStorage {
     /**
      * Sets the default number of seconds between saves, when none have been set by the player
      */
-    private static readonly defaultTimeBetweenSaves = 10;
+    private static readonly defaultTimeBetweenSaves = 1;
 
     /**
      * The currently watched object
@@ -34,11 +34,6 @@ class PersistentStorage {
      * The date that the last object was saved on
      */
     private readonly lastSavedOn: ko.Observable<Date>;
-    
-    /**
-     * Calculates the number of seconds since the last object was saved
-     */
-    private readonly secondsSinceLastSave: ko.Computed<number>;
 
     /**
      * Creates a new PersistentStorage
@@ -51,19 +46,6 @@ class PersistentStorage {
         this.delayBetweenSaves = ko.observable(PersistentStorage.defaultTimeBetweenSaves);
 
         this.lastSavedOn = ko.observable(new Date(0));
-        
-        this.secondsSinceLastSave = ko.computed(() => {
-
-            if (this.lastSavedOn() == null) {
-
-                return Number.MAX_VALUE;
-            }
-
-            var millisecondsSinceLastSave = new Date().getTime() - this.lastSavedOn().getTime();
-            var secondsSinceLastSave = millisecondsSinceLastSave / 1000;
-
-            return secondsSinceLastSave;
-        });
     }
 
     /**
@@ -79,7 +61,7 @@ class PersistentStorage {
         if (savedPersistentStorage !== null){
 
             const game = Game.restore(savedPersistentStorage.game);
-            var persistentStorage = new PersistentStorage(game);
+            const persistentStorage = new PersistentStorage(game);
     
             persistentStorage.delayBetweenSaves(savedPersistentStorage.delayBetweenSaves);
             persistentStorage.lastSavedOn(new Date(savedPersistentStorage.lastSavedOn));
@@ -87,7 +69,7 @@ class PersistentStorage {
         }
 
         const game = Game.restore(null);
-        var persistentStorage = new PersistentStorage(game);
+        const persistentStorage = new PersistentStorage(game);
 
         return persistentStorage;
     }
@@ -113,9 +95,9 @@ class PersistentStorage {
 
         this.lastSavedOn(new Date());
 
-        var jsonObject = this.toJSON();
-        var serialisedJSON = JSON.stringify(jsonObject);
-        var localStorage = window.localStorage;
+        const jsonObject = this.toJSON();
+        const serialisedJSON = JSON.stringify(jsonObject);
+        const localStorage = window.localStorage;
 
         localStorage.setItem(PersistentStorage.storagePath, serialisedJSON);
     }
@@ -127,7 +109,7 @@ class PersistentStorage {
 
         this.lastSavedOn(new Date(0));
 
-        var localStorage = window.localStorage;
+        const localStorage = window.localStorage;
         localStorage.removeItem(PersistentStorage.storagePath);
     
         this.watchedGame = Game.restore(null);
@@ -140,11 +122,13 @@ class PersistentStorage {
 
         setInterval(() => {
 
-            this.lastSavedOn(this.lastSavedOn());
+            const millisecondsSinceLastSave = new Date().getTime() - this.lastSavedOn().getTime();
+            const secondsSinceLastSave = millisecondsSinceLastSave / 1000;
 
-            if (this.secondsSinceLastSave() > this.delayBetweenSaves()) {
+            if (secondsSinceLastSave > this.delayBetweenSaves()) {
 
                 this.saveToLocalStorage();
+                this.watchForGameChanges();
             }
         }, 1000);
     }
@@ -155,8 +139,8 @@ class PersistentStorage {
      */
     private static getDataFromStorage(): ISavablePersistentStorage | null {
 
-        var localStorage = window.localStorage;
-        var serializedSave = localStorage.getItem(PersistentStorage.storagePath);
+        const localStorage = window.localStorage;
+        const serializedSave = localStorage.getItem(PersistentStorage.storagePath);
         
         if (serializedSave === null){
             return null;
@@ -191,8 +175,7 @@ class PersistentStorage {
                     player: {
                         bank: {
                             balance: persistedStorage.player.bank.balance
-                        },
-                        purchasedStock: persistedStorage.player.purchasedStock
+                        }
                     },
                     ticker: {
                      maxPreviewedCompanies: persistedStorage.ticker.maxPreviewedCompanies,
@@ -202,8 +185,9 @@ class PersistentStorage {
                          companies: persistedStorage.ticker.stockExchange.companies.filter((company: any) => !company.isDefault),
                          selectedCompany: persistedStorage.ticker.stockExchange.selectedCompany,
                          // This wasn't previously saved
-                         stockToBuy: 0
-                     }   
+                         stockToBuy: 0,
+                         purchasedStock: persistedStorage.player.purchasedStock
+                     }
                     }
                 },
                 delayBetweenSaves: persistedStorage.persistentStorage.delayBetweenSaves,
@@ -219,7 +203,7 @@ class PersistentStorage {
 
 window.addEventListener("load", () => {
 
-    var persistentStorage = PersistentStorage.restore();
+    const persistentStorage = PersistentStorage.restore();
     persistentStorage.watchForGameChanges();
     
     ko.applyBindings(persistentStorage.watchedGame);

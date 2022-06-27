@@ -6,6 +6,23 @@ interface ISavableStockExchange {
     companies: Array<ISavableCompany>;
     selectedCompany: string | null;
     stockToBuy: number;
+    purchasedStock: IDictionary<IPurchasedStock>;
+}
+
+/**
+ * Represents stock that the player has purchased
+ */
+interface IPurchasedStock {
+
+    /**
+     * The value of the stock when it was last purchased
+     */
+    valueWhenPurchased: number;
+
+    /**
+     * The number of stocks we own in total
+     */
+    amount: number;
 }
 
 /**
@@ -13,11 +30,6 @@ interface ISavableStockExchange {
  * @class
  */
 class StockExchange {
-
-    /**
-     * A reference to the current player
-     */
-    public readonly player: ko.Observable<Player>;
 
     /**
      * A collection of companies referenced by the stock market
@@ -45,37 +57,72 @@ class StockExchange {
     public readonly playerInvestedCompanies: ko.Computed<Array<Company>>;
 
     /**
+     * An object which will keep track of how many stocks are owned for each company
+     */
+    public readonly purchasedStock: ko.Observable<IDictionary<IPurchasedStock>>;
+
+    /**
+     * Calculates the player's income per minute based off each company's dividends
+     */
+    public readonly stockIncomePerMinute: ko.Computed<number>;
+
+    /**
+     * Gets the number of stocks owned by the player for the selected company
+     */
+    public readonly purchasedStockCount: ko.Computed<number>;
+
+    /**
+     * Gets the profits the player has made since they purchased the stocks. The value of the stock when it was last purchased will be considered when checking the "original" value.
+     */
+    public readonly playerStockProfit: ko.Computed<number>;
+
+    /**
      * Creates a new StockExchange
      * @param player - A reference to the current player so we can track their owned stock // Todo - refactor this out of the Player object and into the StockExchange object
      */
-    constructor(player: Player) {
+    constructor() {
             
-        this.player = ko.observable(player);
+        this.purchasedStock = ko.observable({});
+
+        this.stockIncomePerMinute = ko.computed(() => {
+
+            const purchasedStock = this.purchasedStock();
+            const companyNames = Object.keys(purchasedStock);
+
+            let incomePerMinute = 0;
+            companyNames.forEach(companyName => {
+
+                const minimumOwnedStockForPayout = this.getMinimumOwnedStockForPayout(companyName);
+
+                if (minimumOwnedStockForPayout !== 0) {
+
+                    const companyStocks = purchasedStock[companyName];
+                    incomePerMinute += Math.floor(companyStocks.amount / minimumOwnedStockForPayout);
+                }
+            });
+
+            return incomePerMinute;
+        });
 
         const companies: Array<Company> = [];
         gameConfig.defaultCompanies.forEach(defaultCompany => {
 
-            var generatedCompany = Company.restoreSystemCompany(defaultCompany);
+            const generatedCompany = Company.restoreSystemCompany(defaultCompany);
             companies.push(generatedCompany);
         });
     
         this.companies = ko.observableArray(companies);
         this.playerInvestedCompanies = ko.computed(() => {
 
-            if (this.player() === null) {
+            const companiesBuffer = this.companies();
+            const playerInvestmentsBuffer = Object.keys(this.purchasedStock());
 
-                return [];
-            }
+            const filteredCompanies = companiesBuffer.filter((potentialPlayerInvestment) => {
 
-            var companiesBuffer = this.companies();
-            var playerInvestmentsBuffer = Object.keys(this.player().purchasedStock());
+                const companyName = potentialPlayerInvestment.companyName();
+                const isInvestment = playerInvestmentsBuffer.indexOf(companyName) !== -1;
 
-            var filteredCompanies = companiesBuffer.filter((potentialPlayerInvestment) => {
-
-                var companyName = potentialPlayerInvestment.companyName();
-                var isInvestment = playerInvestmentsBuffer.indexOf(companyName) !== -1;
-
-                return isInvestment && this.player().purchasedStock()[companyName].amount !== 0;
+                return isInvestment && this.purchasedStock()[companyName].amount !== 0;
             })
 
             return filteredCompanies;
@@ -83,22 +130,72 @@ class StockExchange {
 
         this.selectedCompany = ko.observable(null);
         this.stockAmountToBuy = ko.observable("1");
+
         this.priceToBuyStock = ko.computed(() => {
 
-            const company = this.selectedCompany();
-            if (company === null){
+            const selectedCompany = this.selectedCompany();
+            if (selectedCompany === null) {
 
                 return 0;
             }
 
-            if (isNaN(+this.stockAmountToBuy())){
+            const stockAmountToBuy = this.stockAmountToBuy();
+            const pricePerStock = selectedCompany.pricePerStock();
+            
+            if (isNaN(+stockAmountToBuy)){
 
                 return 0;
             }
-
-            var price = +this.stockAmountToBuy() * company.stockValue();
-
+        
+            const price = +stockAmountToBuy * pricePerStock;
             return MathsLibrary.round(price, 2);
+        });
+
+        this.purchasedStockCount = ko.computed(() => {
+
+            const selectedCompany = this.selectedCompany();
+            const purchasedStock = this.purchasedStock();            
+
+            if (selectedCompany === null) {
+
+                return 0;
+            }
+            
+            const selectedCompanyName = selectedCompany.companyName();
+            const purchasedCompanyStock = purchasedStock[selectedCompanyName];
+            
+            if (purchasedCompanyStock === undefined){
+
+                return 0;
+            }
+
+            const amountOwned = purchasedCompanyStock.amount;
+
+            return amountOwned;
+        });
+
+        this.playerStockProfit = ko.computed(() => {
+
+            const selectedCompany = this.selectedCompany();
+            if (selectedCompany === null) {
+                return 0;
+            }
+
+            const currentPricePerStock = selectedCompany.pricePerStock();
+            const companyName = selectedCompany.companyName();
+            const purchasedStock = this.purchasedStock();
+            const companyStocks = purchasedStock[companyName];
+
+            if (companyStocks === undefined) {                
+
+                return 0;
+            }
+
+            const valueWhenPurchased = companyStocks.valueWhenPurchased;
+            const valueDifference = currentPricePerStock - valueWhenPurchased;
+            const profit = (valueDifference / currentPricePerStock) * 100;
+
+            return profit;
         });
     }
 
@@ -108,9 +205,9 @@ class StockExchange {
      * @param player - A reference to the current player so we can track their owned stock // Todo - refactor this out of the Player object and into the StockExchange object
      * @returns the restored StockExchange object
      */
-    public static restore(savedStockExchange: ISavableStockExchange | null, player: Player): StockExchange {
+    public static restore(savedStockExchange: ISavableStockExchange | null): StockExchange {
 
-        var stockExchange = new StockExchange(player);
+        const stockExchange = new StockExchange();
 
         if (savedStockExchange !== null){
 
@@ -124,6 +221,8 @@ class StockExchange {
         
                 stockExchange.selectCompanyByName(savedStockExchange.selectedCompany);
             }
+
+            stockExchange.purchasedStock(savedStockExchange.purchasedStock);
         }
     
         return stockExchange;
@@ -135,7 +234,7 @@ class StockExchange {
      */
     public selectCompanyByName(companyName: string): void {
 
-        var matchingCompany = this.companies().find(potentialCompany => {
+        const matchingCompany = this.companies().find(potentialCompany => {
 
             return potentialCompany.companyName() === companyName;
         });
@@ -148,12 +247,13 @@ class StockExchange {
 
     /**
      * Attempts to sell a specified number of stocks. If the player doesn't have enough stocks to sell, no stocks will be sold
+     * @param bank - The bank containing the player's funds
      * @returns whether the player has enough stocks to sell
      */
-    public trySellStocks(): boolean {
+    public trySellStocks(bank: Bank): boolean {
 
-        var playerStockCollection = this.player().purchasedStock();
-        var company = this.selectedCompany();
+        const playerStockCollection = this.purchasedStock();
+        const company = this.selectedCompany();
 
         if (company === null) {
 
@@ -165,71 +265,77 @@ class StockExchange {
             return false;
         }
 
-        var ownedStock = playerStockCollection[company.companyName()];
+        const companyName = company.companyName();
+        const ownedStock = playerStockCollection[companyName];
 
         if (ownedStock.amount < +this.stockAmountToBuy()) {
 
             return false;
         }
 
-        var totalStockvalue = this.priceToBuyStock();
+        const totalStockvalue = this.priceToBuyStock();
 
         ownedStock.amount -= +this.stockAmountToBuy()
 
         // Since we no longer own any of these stocks, we can safely discard this
         if (ownedStock.amount === 0) {
 
-            ownedStock.valueWhenPurchased = 0;
+            delete playerStockCollection[companyName];
         }
 
-        this.player().bank().deposit(totalStockvalue);
+        bank.deposit(totalStockvalue);
 
         // Let the knockout binding know there has been a change
-        this.player().purchasedStock(this.player().purchasedStock());
+        this.purchasedStock(playerStockCollection);
         return true;
     }
 
     /**
      * Attempts to purchase a specified number of stocks. If the player cannot afford to purchase all of the stocks, no stocks will be purchased
+     * @param bank - The bank containing the player's funds
      * @returns whether the player has enough funds to cover the costs of the stock
      */
-    public tryPurchaseStocks(): boolean {
+    public tryPurchaseStocks(bank: Bank): boolean {
 
-        var priceBuffer = this.priceToBuyStock();
+        const totalPrice = this.priceToBuyStock();
 
-        if (!this.player().bank().tryWithdraw(priceBuffer)) {
-
-            return false;
-        }
-
-        if (isNaN(+this.stockAmountToBuy())){
+        if (!bank.tryWithdraw(totalPrice)) {
 
             return false;
         }
 
-        var playerStockCollection = this.player().purchasedStock();
-        var company = this.selectedCompany();
+        const stockAmountToBuy = this.stockAmountToBuy();
+        if (isNaN(+stockAmountToBuy)){
+
+            return false;
+        }
+
+        const playerStockCollection = this.purchasedStock();
+        const company = this.selectedCompany();
         
         if (company === null){
 
             return false;
         }
 
-        var ownedStock = playerStockCollection[company.companyName()];
+        const companyName = company.companyName();
 
+        let ownedStock = playerStockCollection[companyName];
         if (ownedStock === undefined) {
 
-            ownedStock = playerStockCollection[company.companyName()] = {
+            const audits = company.audits();
+            const latestAudit = audits[0];
+
+            ownedStock = playerStockCollection[companyName] = {
                 amount: 0,
-                dividends: company.stockYield(),
-                valueWhenPurchased: company.stockValue()
+                valueWhenPurchased: latestAudit.pricePerStock
             };
         }
 
-        ownedStock.amount += +this.stockAmountToBuy();
+        ownedStock.amount += +stockAmountToBuy;
 
         // Let the knockout binding know there has been a change
-        this.player().purchasedStock(this.player().purchasedStock());
+        this.purchasedStock(playerStockCollection);
 
         return true;
     }
@@ -246,7 +352,55 @@ class StockExchange {
 
             companies: this.companies().filter(company => !company.isSystemOwned).map(company => company.toJSON()),
             selectedCompany: company !== null ? company.companyName() : null,
-            stockToBuy: !isNaN(+this.stockAmountToBuy()) ? +this.stockAmountToBuy() : 0
+            stockToBuy: !isNaN(+this.stockAmountToBuy()) ? +this.stockAmountToBuy() : 0,
+            purchasedStock: this.purchasedStock()
         };
+    }
+
+    /**
+     * Gets the minimum amount of stock the player needs to own in order to receive $1 per minute
+     * @param companyName the name of the company
+     * @returns 
+     */
+    private getMinimumOwnedStockForPayout(companyName: string): number {
+
+        const companies = this.companies();
+        const company = companies.find(potentialCompany => potentialCompany.companyName() === companyName);
+
+        if (company === undefined){
+
+            return 0;
+        }
+
+        const companyValue = company.currentValue();
+        const stockType = company.stockType();
+
+        // No dividends
+        if (stockType === 0) {
+
+            return 0;
+        }
+
+        switch (stockType) {
+
+            default:
+                console.error(`Stock type ${stockType} not configured. Can't check stocks per money per minute`);
+
+            // Low dividends. They need to purchase 1 stock for every $8,000,000 the company is worth to receive $1
+            case 1:
+                return companyValue / 8000000;
+
+            // Medium dividends. They need to purchase 1 stock for every $18,500,000 the company is worth in order to receive $1
+            case 2:
+                return companyValue / 18500000;
+
+            // High dividends. They need to purchase 1 stock for every $200,000,000 the company is worth to receive $1
+            case 3:
+                return companyValue / 200000000;
+
+            // Very high dividends. They need to purchase 1 stock for every $790,000,000 the company is worth to receive $1
+            case 4:
+                return companyValue / 790000000
+        }
     }
 }

@@ -8,22 +8,6 @@ class Player {
      */
     constructor(bank) {
         this.bank = ko.observable(bank);
-        this.purchasedStock = ko.observable({});
-        this.getStockIncomePerMinute = ko.computed(() => {
-            const purchasedStock = this.purchasedStock();
-            const companyNames = Object.keys(purchasedStock);
-            let dividends = 0;
-            companyNames.forEach(companyName => {
-                const stock = purchasedStock[companyName];
-                dividends += stock.amount * stock.dividends;
-            });
-            return dividends;
-        });
-        this.incomePerMinute = ko.computed(() => {
-            const incomePerMinute = this.getStockIncomePerMinute();
-            const flooredIncome = MathsLibrary.floor(incomePerMinute, 2);
-            return flooredIncome;
-        });
     }
     /**
      * Restores a player object from JSON
@@ -34,7 +18,6 @@ class Player {
         if (savedPlayer !== null) {
             const savedBank = Bank.restore(savedPlayer.bank);
             const player = new Player(savedBank);
-            player.purchasedStock(savedPlayer.purchasedStock);
             return player;
         }
         const bank = new Bank();
@@ -47,8 +30,7 @@ class Player {
      */
     toJSON() {
         return {
-            bank: this.bank().toJSON(),
-            purchasedStock: this.purchasedStock()
+            bank: this.bank().toJSON()
         };
     }
 }

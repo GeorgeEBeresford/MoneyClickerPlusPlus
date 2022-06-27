@@ -51,6 +51,7 @@ class Game {
         this.currentPanel = ko.observable(Game.defaultPanel);
 
         this.initialise();
+        this.generateStockRevenue();
     }
 
     /**
@@ -62,7 +63,8 @@ class Game {
         if (savedGame !== null) {
     
             const savedPlayer = Player.restore(savedGame.player);
-            const savedMoneyGenerator = MoneyGenerator.restore(savedGame.moneyGenerator, savedPlayer);
+            const savedBank = savedPlayer.bank();
+            const savedMoneyGenerator = MoneyGenerator.restore(savedGame.moneyGenerator, savedBank);
             const savedTicker = Ticker.restore(savedGame.ticker, savedPlayer);
             const game = new Game(savedPlayer, savedMoneyGenerator, savedTicker)
 
@@ -71,7 +73,8 @@ class Game {
         }
 
         const player = Player.restore(null);
-        const moneyGenerator = MoneyGenerator.restore(null, player);
+        const bank = player.bank();
+        const moneyGenerator = MoneyGenerator.restore(null, bank);
         const ticker = Ticker.restore(null, player);
 
         var game = new Game(player, moneyGenerator, ticker);
@@ -112,5 +115,22 @@ class Game {
         
         this.moneyGenerator().watchCurrentTime();
         this.ticker().startTicking();
+    }
+
+    /**
+     * Generate money for the player every minute from dividends
+     */
+    private generateStockRevenue(): void{
+
+        const player = this.player();
+        const bank = player.bank();
+        const ticker = this.ticker();
+
+        setInterval(() => {
+
+            var moneyPerMinute = ticker.incomePerMinute();
+            bank.deposit(moneyPerMinute);
+
+        }, 60000);
     }
 }

@@ -15,7 +15,7 @@ class MoneyGenerator {
     /**
      * A reference to the current player
      */
-    private readonly player: ko.Observable<Player>;
+    private readonly bank: ko.Observable<Bank>;
 
     /**
      * The amount of money that the player will receive without boosts
@@ -46,9 +46,9 @@ class MoneyGenerator {
      * Creates a new MoneyGenerator
      * @param player - The player which the MoneyGenerator should create money for
      */
-    constructor(player: Player){
+    constructor(bank: Bank){
 
-        this.player = ko.observable(player);
+        this.bank = ko.observable(bank);
         this.baseCashPerClick = ko.observable(1);
         this.boostExpires = ko.observable(new Date(0));
     
@@ -82,19 +82,18 @@ class MoneyGenerator {
         this.cashPerClick = ko.computed(() => {
     
             return this.boostExpires() > new Date() ? this.baseCashPerClick() * 2 : this.baseCashPerClick();
-        })
-
-        this.generateIncome();
+        });
     }
 
     /**
      * Restores a MoneyGenerator from JSON
      * @param savedMoneyGenerator - A JSON object representing the money generator
+     * @param bank - A reference to the bank which any money will be deposited into
      * @returns the restored MoneyGenerator
      */
-    public static restore(savedMoneyGenerator: ISavableMoneyGenerator | null, player: Player): MoneyGenerator {
+    public static restore(savedMoneyGenerator: ISavableMoneyGenerator | null, bank: Bank): MoneyGenerator {
 
-        var moneyGenerator = new MoneyGenerator(player);
+        var moneyGenerator = new MoneyGenerator(bank);
 
         if (savedMoneyGenerator !== null){
 
@@ -103,20 +102,6 @@ class MoneyGenerator {
         }
     
         return moneyGenerator;
-    }
-
-    /**
-     * Generates income for the player every minute
-     */
-    public generateIncome(): void {
-
-        setInterval(() => {
-
-            var moneyPerMinute = this.player().incomePerMinute();
-
-            this.player().bank().deposit(moneyPerMinute);
-
-        }, 60000);
     }
 
     /**
@@ -151,7 +136,8 @@ class MoneyGenerator {
      */
     public boostGenerator(seconds: number): void {
 
-        var isWithdrawalSuccess = this.player().bank().tryWithdraw(this.getBoostCost(seconds));
+        const bank = this.bank();
+        var isWithdrawalSuccess = bank.tryWithdraw(this.getBoostCost(seconds));
 
         if (!isWithdrawalSuccess) {
 
@@ -173,7 +159,8 @@ class MoneyGenerator {
      */
     public generateCash(): void {
 
-        this.player().bank().deposit(this.cashPerClick())
+        const bank = this.bank();
+        bank.deposit(this.cashPerClick())
     }
 
     /**
@@ -181,7 +168,10 @@ class MoneyGenerator {
      */
     public upgradeGenerator(): void {
 
-        var isWithdrawalSuccess = this.player().bank().tryWithdraw(this.upgradeCost());
+        const bank = this.bank();
+        const upgradeCost = this.upgradeCost();
+
+        var isWithdrawalSuccess = bank.tryWithdraw(upgradeCost);
 
         if (!isWithdrawalSuccess) {
 
