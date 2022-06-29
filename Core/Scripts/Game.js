@@ -1,8 +1,11 @@
-"use strict";
+import * as ko from "./common/knockout";
+import MoneyGenerator from "./money/money-generator";
+import Ticker from "./companies/ticker";
+import Player from "./player/player";
 /**
  * The main controller for the game
  */
-class Game {
+export default class Game {
     /**
      * Creates a new Game
      */
@@ -10,6 +13,7 @@ class Game {
         this.player = ko.observable(player);
         this.moneyGenerator = ko.observable(moneyGenerator);
         this.ticker = ko.observable(ticker);
+        this.isNavigationBarShown = ko.observable(false);
         this.currentPanel = ko.observable(Game.defaultPanel);
         this.initialise();
         this.generateStockRevenue();
@@ -21,16 +25,14 @@ class Game {
     static restore(savedGame) {
         if (savedGame !== null) {
             const savedPlayer = Player.restore(savedGame.player);
-            const savedBank = savedPlayer.bank();
-            const savedMoneyGenerator = MoneyGenerator.restore(savedGame.moneyGenerator, savedBank);
+            const savedMoneyGenerator = MoneyGenerator.restore(savedGame.moneyGenerator);
             const savedTicker = Ticker.restore(savedGame.ticker, savedPlayer);
             const game = new Game(savedPlayer, savedMoneyGenerator, savedTicker);
             game.currentPanel(savedGame.currentPanel);
             return game;
         }
         const player = Player.restore(null);
-        const bank = player.bank();
-        const moneyGenerator = MoneyGenerator.restore(null, bank);
+        const moneyGenerator = MoneyGenerator.restore(null);
         const ticker = Ticker.restore(null, player);
         var game = new Game(player, moneyGenerator, ticker);
         return game;
@@ -43,6 +45,14 @@ class Game {
         this.currentPanel(panelName);
         // Reset their company selection so the player is presented with a fresh panel
         this.ticker().stockExchange().selectedCompany(null);
+        // After changing the panel, hide the menu for mobile users
+        this.isNavigationBarShown(false);
+    }
+    /**
+     * Toggles whether the navigation bar is displayed
+     */
+    toggleIsNavigationBarShown() {
+        this.isNavigationBarShown(!this.isNavigationBarShown());
     }
     /**
      * Creates a new JSON object representing the current object

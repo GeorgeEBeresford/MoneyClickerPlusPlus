@@ -1,29 +1,13 @@
-/**
- * Represents a Company that has been saved as JSON
- */
-interface ISavableCompany {
-    
-    companyName: string;
-    industry: string;
-    stockType: number;
-    lastUpdated: string;
-    currentValue: number;
-    audits: Array<ICompanyValueChange>;
-}
-
-/**
- * Represents a change to how much the company is worth
- */
-interface ICompanyValueChange {
-
-    pricePerStock: number;
-    percentageChange: number;
-}
+import * as ko from "../common/knockout";
+import ICompanyValueChange from "../types/ICompanyValueChange";
+import ISavableCompany from "../types/ISavableCompany";
+import ISystemCompany from "../types/ISystemCompany";
+import MathsLibrary from "../common/maths-library";
 
 /**
  * A company that provides a service or goods to customers
  */
-class Company {
+export default class Company {
 
     /**
      * The maximum number of history records to keep for a company
@@ -118,16 +102,16 @@ class Company {
 
         this.stockValueChange = ko.computed(() => {
 
-            const audit = this.audits();
-            if (audit.length < 2) {
+            const audits = this.audits();
+            if (audits.length < 2) {
 
                 return 0;
             }
 
-            const oldestValue = audit[0].pricePerStock;
-            const latestValue = audit[audit.length - 1].pricePerStock;
-
-            const difference = latestValue - oldestValue;
+            const previousAudit = audits[audits.length - 2];
+            const previousValue = previousAudit.pricePerStock;
+            const latestValue = this.currentValue();
+            const difference = latestValue - previousValue;
 
             return difference;
         });

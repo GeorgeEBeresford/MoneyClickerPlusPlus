@@ -1,17 +1,11 @@
-/**
- * Represents a PersistentStorage that has been saved as JSON
- */
-interface ISavablePersistentStorage {
-
-    game: ISavableGame,
-    lastSavedOn: string;
-    delayBetweenSaves: number;
-}
+import * as ko from "./common/knockout";
+import Game from "./game";
+import ISavablePersistentStorage from "./types/ISavablePersistentStorage";
 
 /**
  * An object which will serialise another object into a string and then save it into the LocalStorage
  */
-class PersistentStorage {
+export default class PersistentStorage {
 
     public static readonly storagePath = "moneyclicker++/savegame";
 
@@ -178,16 +172,16 @@ class PersistentStorage {
                         }
                     },
                     ticker: {
-                     maxPreviewedCompanies: persistedStorage.ticker.maxPreviewedCompanies,
-                     tickerInterval: persistedStorage.ticker.tickerInterval,
-                     stockExchange: {
-                         // We no longer store default companies. They're in the configuration after all
-                         companies: persistedStorage.ticker.stockExchange.companies.filter((company: any) => !company.isDefault),
-                         selectedCompany: persistedStorage.ticker.stockExchange.selectedCompany,
-                         // This wasn't previously saved
-                         stockToBuy: 0,
-                         purchasedStock: persistedStorage.player.purchasedStock
-                     }
+                    maxPreviewedCompanies: persistedStorage.ticker.maxPreviewedCompanies,
+                    tickerInterval: persistedStorage.ticker.tickerInterval,
+                    stockExchange: {
+                        // We no longer store default companies. They're in the configuration after all
+                        companies: persistedStorage.ticker.stockExchange.companies.filter((company: any) => !company.isDefault),
+                        selectedCompany: persistedStorage.ticker.stockExchange.selectedCompany,
+                        // This wasn't previously saved
+                        stockToBuy: 0,
+                        purchasedStock: persistedStorage.player.purchasedStock
+                    }
                     }
                 },
                 delayBetweenSaves: persistedStorage.persistentStorage.delayBetweenSaves,
@@ -201,9 +195,12 @@ class PersistentStorage {
     }
 }
 
+// Keep a reference to the persistentStorage object so we can use it for debugging later
+let persistentStorage;
+
 window.addEventListener("load", () => {
 
-    const persistentStorage = PersistentStorage.restore();
+    persistentStorage = PersistentStorage.restore();
     persistentStorage.watchForGameChanges();
     
     ko.applyBindings(persistentStorage.watchedGame);

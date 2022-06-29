@@ -1,8 +1,9 @@
-"use strict";
+import * as ko from "../common/knockout";
+import MathsLibrary from "../common/maths-library";
 /**
  * A company that provides a service or goods to customers
  */
-class Company {
+export default class Company {
     /**
      * Creates a new Company
      * @param isSystemOwned - Whether the company is owned by the application
@@ -21,13 +22,14 @@ class Company {
             return latestAudit;
         });
         this.stockValueChange = ko.computed(() => {
-            const audit = this.audits();
-            if (audit.length < 2) {
+            const audits = this.audits();
+            if (audits.length < 2) {
                 return 0;
             }
-            const oldestValue = audit[0].pricePerStock;
-            const latestValue = audit[audit.length - 1].pricePerStock;
-            const difference = latestValue - oldestValue;
+            const previousAudit = audits[audits.length - 2];
+            const previousValue = previousAudit.pricePerStock;
+            const latestValue = this.currentValue();
+            const difference = latestValue - previousValue;
             return difference;
         });
         this.historicValuesAscendingOrder = ko.computed(() => {

@@ -1,8 +1,9 @@
-"use strict";
+import * as ko from "../common/knockout";
+import Bank from "../money/bank";
 /**
  * An object representing the current player
  */
-class Player {
+export default class Player {
     /**
      * Creates a new Player
      */

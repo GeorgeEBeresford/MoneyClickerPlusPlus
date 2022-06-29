@@ -1,8 +1,9 @@
-"use strict";
+import * as ko from "./common/knockout";
+import Game from "./game";
 /**
  * An object which will serialise another object into a string and then save it into the LocalStorage
  */
-class PersistentStorage {
+export default class PersistentStorage {
     /**
      * Creates a new PersistentStorage
      * @param storagePath - The path which the saved object will be stored under inside LocalStorage
@@ -136,8 +137,10 @@ PersistentStorage.storagePath = "moneyclicker++/savegame";
  * Sets the default number of seconds between saves, when none have been set by the player
  */
 PersistentStorage.defaultTimeBetweenSaves = 1;
+// Keep a reference to the persistentStorage object so we can use it for debugging later
+let persistentStorage;
 window.addEventListener("load", () => {
-    const persistentStorage = PersistentStorage.restore();
+    persistentStorage = PersistentStorage.restore();
     persistentStorage.watchForGameChanges();
     ko.applyBindings(persistentStorage.watchedGame);
 });

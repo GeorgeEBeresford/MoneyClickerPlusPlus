@@ -1,30 +1,16 @@
-/**
- * Represents a bank that has been saved as JSON
- */
-interface ISavableBank {
-
-    balance: number;
-}
+import * as ko from "../common/knockout";
+import ISavableBank from "../types/ISavableBank";
+import MathsLibrary from "../common/maths-library";
 
 /**
  * An object representing a bank to hold the currency of the player
- * @class
  */
-class Bank {
+export default class Bank {
 
     /**
      * The current balance of the player
-     * @instance
-     * @type {KnockoutObservable<Number>}
      */
     public readonly balance: ko.Observable<number>;
-
-    /**
-     * The current balance of the player formatted a way that is nice to look at
-     * @instance
-     * @type {KnockoutComputed<String>}
-     */
-     public readonly balancePreview: ko.Computed<string>;
 
     /**
      * Creates a new Bank
@@ -32,13 +18,6 @@ class Bank {
     constructor() {
 
        this.balance = ko.observable(0);
-       this.balancePreview = ko.computed(() => {
-
-            var flooredMoney = Math.floor(this.balance() * 100) / 100;
-            var formattedMoney = `$${flooredMoney.toFixed(2)}`;
-
-            return formattedMoney;
-        });
     }
 
     /**

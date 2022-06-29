@@ -1,19 +1,14 @@
-"use strict";
+import * as ko from "../common/knockout";
+import MathsLibrary from "../common/maths-library";
 /**
  * An object representing a bank to hold the currency of the player
- * @class
  */
-class Bank {
+export default class Bank {
     /**
      * Creates a new Bank
      */
     constructor() {
         this.balance = ko.observable(0);
-        this.balancePreview = ko.computed(() => {
-            var flooredMoney = Math.floor(this.balance() * 100) / 100;
-            var formattedMoney = `$${flooredMoney.toFixed(2)}`;
-            return formattedMoney;
-        });
     }
     /**
      * Restores a Bank from JSON

@@ -1,35 +1,16 @@
-/**
- * Represents a StockExchange that has been saved as JSON
- */
-interface ISavableStockExchange {
-
-    companies: Array<ISavableCompany>;
-    selectedCompany: string | null;
-    stockToBuy: number;
-    purchasedStock: IDictionary<IPurchasedStock>;
-}
-
-/**
- * Represents stock that the player has purchased
- */
-interface IPurchasedStock {
-
-    /**
-     * The value of the stock when it was last purchased
-     */
-    valueWhenPurchased: number;
-
-    /**
-     * The number of stocks we own in total
-     */
-    amount: number;
-}
+import * as ko from "../common/knockout";
+import IDictionary from "../types/IDictionary";
+import IPurchasedStock from "../types/IPurchasedStock";
+import ISavableStockExchange from "../types/ISavableStockExchange";
+import Bank from "../money/bank";
+import Company from "./company";
+import gameConfig from "../common/game-config";
+import MathsLibrary from "../common/maths-library";
 
 /**
  * An object that allows the viewing, purchasing and selling of stocks for different companies
- * @class
  */
-class StockExchange {
+export default class StockExchange {
 
     /**
      * A collection of companies referenced by the stock market
@@ -170,7 +151,6 @@ class StockExchange {
             }
 
             const amountOwned = purchasedCompanyStock.amount;
-
             return amountOwned;
         });
 

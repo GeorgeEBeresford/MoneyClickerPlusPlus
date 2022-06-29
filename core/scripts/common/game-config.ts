@@ -1,3 +1,5 @@
+import ISystemCompany from "../types/ISystemCompany";
+
 /**
  * A root object for any default game settings
  */
@@ -7,32 +9,6 @@ interface IGameConfig {
      * A collection of default companies to start off with
      */
     defaultCompanies: Array<ISystemCompany>;
-}
-
-/**
- * A company that is owned by the application
- */
-interface ISystemCompany {
-
-    /*
-     * The name of the company
-     */
-    companyName: string;
-
-    /**
-     * The industry of the company
-     */
-    industry: string;
-
-    /**
-     * The type of stock the company has (0: No dividends, 1: Low dividend, 2: Medium dividend, 3: High dividend, 4: Very high dividend)
-     */
-    stockType: number;
-
-    /**
-     * An initial company value to give the company
-     */
-    currentValue: number;
 }
 
 var gameConfig: IGameConfig = {
@@ -91,7 +67,7 @@ var gameConfig: IGameConfig = {
         },
         // High dividends
         {
-            companyName: "Rolléx",
+            companyName: "Rollerex",
             industry: "Fashion",
             stockType: 3,
             currentValue: 17837748948
@@ -111,3 +87,5 @@ var gameConfig: IGameConfig = {
         }
     ]
 }
+
+export default gameConfig;

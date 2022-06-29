@@ -1,18 +1,13 @@
-/**
- * Represents a Game that has been saved as JSON
- */
-interface ISavableGame {
-
-    player: ISavablePlayer;
-    moneyGenerator: ISavableMoneyGenerator;
-    currentPanel: string;
-    ticker: ISavableTicker;
-}
+import * as ko from "./common/knockout";
+import MoneyGenerator from "./money/money-generator";
+import Ticker from "./companies/ticker";
+import ISavableGame from "./types/ISavableGame";
+import Player from "./player/player";
 
 /**
  * The main controller for the game
  */
-class Game {
+export default class Game {
 
     /**
      * The first panel that the player will see upon entering the game
@@ -40,6 +35,11 @@ class Game {
     public readonly ticker: ko.Observable<Ticker>;
 
     /**
+     * Whether the navigation bar should be displayed to low-resolution users
+     */
+    public readonly isNavigationBarShown: ko.Observable<boolean>;
+
+    /**
      * Creates a new Game
      */
     constructor(player: Player, moneyGenerator: MoneyGenerator, ticker: Ticker) {
@@ -47,7 +47,7 @@ class Game {
         this.player = ko.observable(player);
         this.moneyGenerator = ko.observable(moneyGenerator);
         this.ticker = ko.observable(ticker);
-        
+        this.isNavigationBarShown = ko.observable(false);
         this.currentPanel = ko.observable(Game.defaultPanel);
 
         this.initialise();
@@ -63,8 +63,7 @@ class Game {
         if (savedGame !== null) {
     
             const savedPlayer = Player.restore(savedGame.player);
-            const savedBank = savedPlayer.bank();
-            const savedMoneyGenerator = MoneyGenerator.restore(savedGame.moneyGenerator, savedBank);
+            const savedMoneyGenerator = MoneyGenerator.restore(savedGame.moneyGenerator);
             const savedTicker = Ticker.restore(savedGame.ticker, savedPlayer);
             const game = new Game(savedPlayer, savedMoneyGenerator, savedTicker)
 
@@ -73,8 +72,7 @@ class Game {
         }
 
         const player = Player.restore(null);
-        const bank = player.bank();
-        const moneyGenerator = MoneyGenerator.restore(null, bank);
+        const moneyGenerator = MoneyGenerator.restore(null);
         const ticker = Ticker.restore(null, player);
 
         var game = new Game(player, moneyGenerator, ticker);
@@ -91,6 +89,17 @@ class Game {
 
         // Reset their company selection so the player is presented with a fresh panel
         this.ticker().stockExchange().selectedCompany(null);
+
+        // After changing the panel, hide the menu for mobile users
+        this.isNavigationBarShown(false);
+    }
+
+    /**
+     * Toggles whether the navigation bar is displayed
+     */
+    public toggleIsNavigationBarShown(): void {
+
+        this.isNavigationBarShown(!this.isNavigationBarShown());
     }
 
     /**

@@ -1,17 +1,13 @@
-/**
- * Represents a Ticker that has been saved as JSON
- */
-interface ISavableTicker {
-
-    maxPreviewedCompanies: number;
-    stockExchange: ISavableStockExchange;
-    tickerInterval: number;
-}
+import * as ko from "../common/knockout";
+import StockExchange from "./stock-exchange";
+import ISavableTicker from "../types/ISavableTicker";
+import Company from "./company";
+import Player from "../player/player";
 
 /**
  * An object that monitors the different companies and provides statistics for how well each company is doing
  */
-class Ticker {
+export default class Ticker {
 
     /**
      * The delay between the ticker changes

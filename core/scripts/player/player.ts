@@ -1,15 +1,11 @@
-/**
- * Represents a Player that has been saved as JSON
- */
-interface ISavablePlayer {
-
-    bank: ISavableBank;
-}
+import * as ko from "../common/knockout";
+import Bank from "../money/bank";
+import ISavablePlayer from "../types/ISavablePlayer";
 
 /**
  * An object representing the current player
  */
-class Player {
+export default class Player {
 
     /**
      * The bank containing the player's money

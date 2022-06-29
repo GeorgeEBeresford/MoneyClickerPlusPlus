@@ -1,64 +1,58 @@
+@import "colour";
+
 .clicker {
 
-    display: inline-block;
+    display: block;
     text-align: center;
-    padding-top: 10px;
-    width: 50%;
+    padding-top: 4em;
+}
 
-    &:after {
-        content: "";
-        display: table;
-        clear: both;
-    }
+.clicker_display {
+    
+    width: 100%;
+    margin-bottom: 2em;
+}
+
+.clicker_displayText {
+
+    color: $white;
+    font-weight: bold;
+}
+
+.clicker_displayText-cash {
+
+    font-weight: bold;
+    color: $green;
+    font-weight: normal;
 }
 
 .clicker_field {
 
     display: block;
     width: 100%;
-    margin-bottom: 0;
-    margin-top: 10px;
-
-    &:after {
-
-        content: "";
-        display: table;
-        clear: both;
-    }
+    margin-top: 1em;
 }
 
 .clicker_field_group {
 
     @extend .clicker_field;
     overflow: hidden;
-    border-radius: 4px;
-}
-
-.clicker_input {
-
-    display: block;
-    border: 0;
-    box-sizing: border-box;
-    width: 80%;
-    padding: 8px 6px;
-    margin-left: 10%;
-    font-size: 1rem;
-    text-align: center;
 }
 
 .clicker_button {
 
     display: block;
     border: 0;
-    padding: 8px 6px;
+    padding: 0.4em 0.3em;
     box-sizing: border-box;
     text-align: center;
-    background-color: #686;
-    color: #ddd;
+    background-color: $faint-green;
+    color: $white;
     font-weight: bold;
     width: 100%;
-    font-size: 1rem;
-    border-radius: 4px;
+    border-radius: 0.1em;
+    min-height: 4em;
+    font-size: 0.9em;
 
     &:hover {
 
@@ -90,12 +84,94 @@
 .clicker_button-generator {
 
     @extend .clicker_button;
+    min-height: 10em;
     margin-top: 0;
     width: 80%;
     text-align: center;
-    padding: 50px 0;
     box-sizing: border-box;
-    margin-bottom: 8px;
     display: inline-block;
-    border-radius: 8px;
+}
+
+.clicker_title {
+
+    margin-top: 2em;
+    display: block;
+    color: $white;
+    font-weight: bold;
+}
+
+.clicker_ticker {
+
+    display: block;
+    background-color: #242424;
+    width: 100%;
+    border-radius: 0.1em;
+    box-sizing: border-box;
+
+    &:hover {
+
+        cursor: default;
+    }
+}
+
+.clicker_tickerCompany {
+
+    display: block;
+    width: 100%;
+    padding: 8px 4px;
+    color: #6F6;
+    box-sizing: border-box;
+}
+
+.clicker_tickerCompany-negative {
+
+    @extend .clicker_tickerCompany;
+    color: #F66;
+}
+
+.clicker_tickerCompany-none {
+
+    @extend .clicker_tickerCompany;
+    color: #aaa;
+}
+
+.clicker_tickerCompanyName {
+
+    display: block;
+    float: left;
+    padding-right: 8px;
+    width: 75%;
+    box-sizing: border-box;
+    text-align: left;
+
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+.clicker_companyPerformance {
+
+    display: block;
+    float: left;
+    width: 25%;
+    font-weight: bold;
+    text-align: right;
+
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+.clicker_footer {
+
+    margin-top: 4em;
+    width: 100%;
+    height: 2em;
+    text-align: center;
+    padding-left: 0.5em;
+    box-sizing: border-box;
 }

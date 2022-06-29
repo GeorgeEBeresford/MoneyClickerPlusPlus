@@ -1,14 +1,13 @@
-"use strict";
+import * as ko from "../common/knockout";
+import MathsLibrary from "../common/maths-library";
 /**
  * An object that can be used to generate money for the player from thin air
  */
-class MoneyGenerator {
+export default class MoneyGenerator {
     /**
      * Creates a new MoneyGenerator
-     * @param player - The player which the MoneyGenerator should create money for
      */
-    constructor(bank) {
-        this.bank = ko.observable(bank);
+    constructor() {
         this.baseCashPerClick = ko.observable(1);
         this.boostExpires = ko.observable(new Date(0));
         this.boostedSecondsRemaining = ko.computed(() => {
@@ -37,8 +36,8 @@ class MoneyGenerator {
      * @param bank - A reference to the bank which any money will be deposited into
      * @returns the restored MoneyGenerator
      */
-    static restore(savedMoneyGenerator, bank) {
-        var moneyGenerator = new MoneyGenerator(bank);
+    static restore(savedMoneyGenerator) {
+        var moneyGenerator = new MoneyGenerator();
         if (savedMoneyGenerator !== null) {
             moneyGenerator.baseCashPerClick(savedMoneyGenerator.baseCashPerClick);
             moneyGenerator.boostExpires(new Date(savedMoneyGenerator.boostExpires));
@@ -68,35 +67,39 @@ class MoneyGenerator {
     /**
      * Doubles the output of the boost generator for a limited number of seconds
      * @param seconds - The number of seconds to boost the generator for
+     * @param bank - The bank which we'll withdraw the funds for the boost from
+     * @returns whether the player could afford to boost the generator
      */
-    boostGenerator(seconds) {
-        const bank = this.bank();
+    boostGenerator(seconds, bank) {
         var isWithdrawalSuccess = bank.tryWithdraw(this.getBoostCost(seconds));
         if (!isWithdrawalSuccess) {
-            return;
+            return false;
         }
         var now = new Date();
         var newExpiration = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds() + seconds);
         this.boostExpires(newExpiration);
+        return true;
     }
     /**
      * Generates money out of thin air for the player
+     * @param bank - The bank which we'll deposit the generated funds into
      */
-    generateCash() {
-        const bank = this.bank();
+    generateCash(bank) {
         bank.deposit(this.cashPerClick());
     }
     /**
      * Upgrades the money generator to give 1 more currency per click
+     * @param bank - The bank which we'll withdraw the funds for the boost from
+     * @returns whether the player could afford to upgrade the generator
      */
-    upgradeGenerator() {
-        const bank = this.bank();
+    upgradeGenerator(bank) {
         const upgradeCost = this.upgradeCost();
         var isWithdrawalSuccess = bank.tryWithdraw(upgradeCost);
         if (!isWithdrawalSuccess) {
-            return;
+            return false;
         }
         this.baseCashPerClick(this.baseCashPerClick() + 1);
+        return true;
     }
     /**
      * Keeps an eye on the current time and refreshes any time-based displays

@@ -1,7 +1,7 @@
 /**
  * A class that provides maths functions for ease of use
  */
-class MathsLibrary {
+export default class MathsLibrary {
 
     /**
      * Generates a random number between min and max. May also result in max.

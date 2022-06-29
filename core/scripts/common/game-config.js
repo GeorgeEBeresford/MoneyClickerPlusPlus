@@ -1,4 +1,3 @@
-"use strict";
 var gameConfig = {
     defaultCompanies: [
         // No dividends
@@ -54,7 +53,7 @@ var gameConfig = {
         },
         // High dividends
         {
-            companyName: "Rolléx",
+            companyName: "Rollerex",
             industry: "Fashion",
             stockType: 3,
             currentValue: 17837748948
@@ -74,4 +73,5 @@ var gameConfig = {
         }
     ]
 };
+export default gameConfig;
 //# sourceMappingURL=game-config.js.map

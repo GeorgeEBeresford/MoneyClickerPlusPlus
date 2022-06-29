@@ -2,77 +2,88 @@
 <html>
 
 <head>
-    <link async="async" rel="stylesheet" href="./core/styles/main.css?v1.0" />
+    <link async="async" rel="stylesheet" href="./core/styles/main.css" />
     <title data-bind="text: player().balance()">Money Clicker++</title>
 </head>
 
 <body class="content">
-    <nav class="content_sidebar">
-        <ul class="navigationbar_options">
+    <div class="content_main_background"></div>
+    <nav class="navigationbar">
+        <button class="navigationbar_toggle" data-bind="click: toggleIsNavigationBarShown">
+            <div class="navigationbar_toggleicon">&#8801;</div>
+        </button>
+        <ul class="navigationbar_options" data-bind="class: isNavigationBarShown() ? 'navigationbar_options-shownOnMobile' : 'navigationbar_options'">
             <li class="navigationbar_option-home" data-bind="click: function() { changePanel('MoneyGenerator') }"></li>
-            <li class="navigationbar_option" data-bind="click: function() { changePanel('MoneyGenerator') }">Generate Money
-            </li>
-            <li class="navigationbar_option" data-bind="click: function() { changePanel('ViewStocks') }">Stock Portfolio
-            </li>
+            <li class="navigationbar_option" data-bind="click: function() { changePanel('MoneyGenerator') }">Generate Money</li>
+            <li class="navigationbar_option" data-bind="click: function() { changePanel('UpgradeClicker') }">Upgrade Clicker</li>
+            <li class="navigationbar_option" data-bind="click: function() { changePanel('ViewStocks') }">Stock Portfolio</li>
             <li class="navigationbar_option" data-bind="click: function() { changePanel('BuyStocks') }">Buy Stocks</li>
-            <li class="navigationbar_option_linkContainer"><a class="navigationbar_option_link" href="/index.html">Back to Main Site</a></li>
         </ul>
     </nav>
-    <div class="content_main_background"></div>
     <main class="content_main">
         <!-- Money Generator -->
-        <section style="display: none" data-bind="visible: currentPanel() == 'MoneyGenerator'">
-            <div class="content_fill">
-                <h1 class="content_title">Buy Stocks</h1>
-                <div class="content_align_center">
-                    <div class="content_display">Balance: <span class="content_display-cash" data-bind="text: $root.player().bank().balancePreview()"></span></div>
-                    <div class="content_display">Income: <span class="content_display-cash" data-bind="text: '$' + Formatter.asCurrency($root.ticker().incomePerMinute()) + ' per minute'"></span>
-                    </div>
-                </div>
+        <section class="clicker" style="display: none" data-bind="with:moneyGenerator, visible: currentPanel() == 'MoneyGenerator'">
+            <!-- Click to generate money -->
+            <div class="clicker_display">
+                <div class="clicker_displayText">Balance: <span class="clicker_displayText-cash" data-bind="text: '$' + Formatter.asCurrency($root.player().bank().balance())"></span></div>
             </div>
-            <!-- Money Generator (Clicker) -->
-            <div class="clicker" data-bind="with: moneyGenerator">
-                <div class="clicker_field">
-                    <button class="clicker_button-generator" data-bind="click: generateCash">
-                        Generate Cash
-                        <span
-                            data-bind="text: boostedSecondsRemaining() > 0 ? '(x2: ' + boostedSecondsRemaining() + 's remaining.)' : ''"></span>
-                    </button>
-                </div>
-                <div class="clicker_field">
-                    <button class="clicker_button" data-bind="click: upgradeGenerator">
-                        Upgrade clicks to $<span data-bind="text: baseCashPerClick() + 1"></span> per Click ($<span
-                            data-bind="text: upgradeCost"></span>)
-                    </button>
-                </div>
-                <div class="clicker_field_group">
-                    <div class="clicker_field-grouped">
-                        <button class="clicker_button-grouped" data-bind="click: function() { boostGenerator(10) }">10s Boost ($<span data-bind="text: getBoostCost(10)"></span>)</button>
-                        <button class="clicker_button-grouped" data-bind="click: function() { boostGenerator(20) }">20s Boost ($<span data-bind="text: getBoostCost(20)"></span>)</button>
-                        <button class="clicker_button-grouped" data-bind="click: function() { boostGenerator(30) }">30s Boost ($<span data-bind="text: getBoostCost(30)"></span>)</button>
-                    </div>
-                </div>
+            <div class="clicker_display" data-bind="visible: boostedSecondsRemaining() !== 0">
+                <div class="clicker_displayText" data-bind="text: 'Boosted for ' + boostedSecondsRemaining() + ' seconds'">Boosted for 0 seconds</div>
             </div>
-            <!-- Money Generator (Ticker) -->
-            <div data-bind="with: ticker">
-                <ul class="ticker" style="display: none" data-bind="visible: companiesPreview().length !== 0, foreach: companiesPreview">
-                    <li data-bind="class: latestAudit().percentageChange >= 0 ? 'ticker_company' : 'ticker_company-negative'" class="ticker_company">
-                        <div class="ticker_company_name" data-bind="text: companyName"></div>
-                        <div class="ticker_company_performance" data-bind="text: latestAudit().percentageChange >= 0 ? '+' + latestAudit().percentageChange.toLocaleString() : latestAudit().percentageChange.toLocaleString()"></div>
+            <div class="clicker_ticker" data-bind="with: $root.ticker, visible: $root.ticker().companiesPreview().length !== 0">
+                <ul data-bind="foreach: companiesPreview">
+                    <li data-bind="class: latestAudit().percentageChange >= 0 ? 'clicker_tickerCompany' : 'clicker_tickerCompany-negative'" class="clicker_tickerCompany">
+                        <div class="clicker_tickerCompanyName" data-bind="text: companyName"></div>
+                        <div class="clicker_tickerCompanyPerformance" data-bind="text: latestAudit().percentageChange >= 0 ? '+' + latestAudit().percentageChange.toFixed(2) + '%' : latestAudit().percentageChange.toFixed(2) + '%'"></div>
                     </li>
                 </ul>
             </div>
-        </section>
-        <!-- Stock Portfolio -->
-        <section style="display: none" data-bind="with: ticker().stockExchange, visible: currentPanel() == 'ViewStocks'">
-            <!-- Stock Portfolio (View All) -->
-            <div style="display: none" data-bind="visible: selectedCompany() === null">
-                <h1 class="content_title">Stock Portfolio</h1>
-                <div class="content_align_center">
-                    <div class="content_display">Balance: <span class="content_display-cash" data-bind="text: $root.player().bank().balancePreview()"></span></div>
-                    <div class="content_display">Income: <span class="content_display-cash" data-bind="text: '$' + Formatter.asCurrency(stockIncomePerMinute()) + ' per minute'"></span></div>
+            <footer class="clicker_footer">
+                <div class="clicker_display">
+                    <span class="clicker_displayText-cash" data-bind="text: '$' + Formatter.asCurrency($root.ticker().incomePerMinute())">$0.00</span><span class="clicker_displayText"> per minute</span></div>
+                <div class="clicker_display">
+                    <p class="clicker_displayText">Click anywhere to generate money</p>
                 </div>
-                <div style="display: none" class="stockexchange" data-bind="visible: playerInvestedCompanies().length === 0">
+            </footer>
+            <!-- We should allow the user to tap anywhere on the screen in order to generate money (easier on mobiles) -->
+            <div class="tap-interceptor" data-bind="click: function() { generateCash($root.player().bank()); }"></div>
+        </section>
+        <section class="clicker" style="display: none" data-bind="with:moneyGenerator, visible: currentPanel() === 'UpgradeClicker'">
+            <div class="clicker_display">
+                <div class="clicker_displayText">Balance: <span class="clicker_displayText-cash" data-bind="text: '$' + Formatter.asCurrency($root.player().bank().balance())"></span></div>
+            </div>
+            <label class="clicker_title">Upgrade $ per click</label>
+            <div class="clicker_field">
+                <button class="clicker_button" data-bind="click: function() { upgradeGenerator($root.player().bank()); }">
+                    <div class="clicker_buttonText" data-bind="text: 'Upgrade to ' + (baseCashPerClick() + 1)"></div>
+                    <div class="clicker_buttonText-subtext" data-bind="text: '$' + Formatter.asCurrency(upgradeCost())"></div>
+                </button>
+            </div>
+            <label class="clicker_title">Boost clicks</label>
+            <div class="clicker_field_group">
+                <div class="clicker_field-grouped">
+                    <button class="clicker_button-grouped" data-bind="click: function() { if (boostGenerator(30, $root.player().bank())) { $root.changePanel('MoneyGenerator'); }}">
+                        <div>30 seconds</div>
+                        <div data-bind="text: '$' + Formatter.asCurrency(getBoostCost(30))"></div>
+                    </button>
+                    <button class="clicker_button-grouped" data-bind="click: function() { if (boostGenerator(60, $root.player().bank())) { $root.changePanel('MoneyGenerator'); }}">
+                        <div>60 seconds</div>
+                        <div data-bind="text: '$' + Formatter.asCurrency(getBoostCost(60))"></div>
+                    </button>
+                    <button class="clicker_button-grouped" data-bind="click: function() { if (boostGenerator(90, $root.player().bank())) { $root.changePanel('MoneyGenerator'); }}">
+                        <div>90 seconds</div>
+                        <div data-bind="text: '$' + Formatter.asCurrency(getBoostCost(90))"></div>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <!-- Stock Portfolio (All) -->
+        <section class="stockexchange" style="display: none" data-bind="with: ticker().stockExchange, visible: currentPanel() == 'ViewStocks' && ticker().stockExchange().selectedCompany() === null">
+            <div class="stockexchange_display">
+                <div class="stockexchange_displayText">Balance: <span class="stockExchange_displayText-green" data-bind="text: '$' + Formatter.asCurrency($root.player().bank().balance())"></span></div>
+            </div>
+            <div class="stockexchange_ticker">
+                <div style="display: none" data-bind="visible: playerInvestedCompanies().length === 0">
                     <h1 class="stockexchange_title">You don't own any stocks yet!</h1>
                     <p>Head over to the stock market to buy more!</p>
                     <div class="stockexchange_row">
@@ -81,237 +92,195 @@
                         </div>
                     </div>
                 </div>
-                <ul style="display: none" class="stockexchange" data-bind="visible: playerInvestedCompanies().length !== 0, foreach: playerInvestedCompanies">
-                    <li data-bind="class: 'content_fill ' + (latestAudit().percentageChange >= 0 ? 'stockexchange_company' : 'stockexchange_company-negative')">
-                        <div class="stockexchange_company_name" data-bind="text: companyName"></div>
-                        <div class="stockexchange_company_buttoncontainer">
-                            <button class="stockexchange_button-link" data-bind="click: function() { $parent.selectedCompany(this) }">Sell</button>
+                <ul style="display: none" data-bind="visible: playerInvestedCompanies().length !== 0, foreach: playerInvestedCompanies">
+                    <li class="stockexchange_company" data-bind="click: function() { $parent.selectedCompany(this) }"">
+                        <div class="stockexchange_companyName">
+                            <div class="stockexchange_displayText" data-bind="text: companyName"></div>
                         </div>
-                        <div class="stockexchange_company_performance" data-bind="text: latestAudit().percentageChange >= 0 ? '+' + latestAudit().percentageChange.toLocaleString() : latestAudit().percentageChange.toLocaleString()"></div>
-                        <div class="stockexchange_company_performance" data-bind="text: '$' + Formatter.asCurrency(pricePerStock())"></div>
+                        <div class="stockexchange_companyPerformance">
+                            <div data-bind="text: '$' + Formatter.asCurrency(pricePerStock()), class: latestAudit().percentageChange >= 0 ? 'stockexchange_displayText-green' : 'stockexchange_displayText-red'"></div>
+                        </div>
                     </li>
                 </ul>
             </div>
-            <!-- Stock Portfolio (Sell) -->
-            <div style="display: none" data-bind="visible: selectedCompany() !== null, with: selectedCompany">
-                <h1 class="content_title">Stock Portfolio (Sell)</h1>
-                <div class="content_align_center">
-                    <div class="content_display">Balance: <span class="content_display-cash" data-bind="text: $root.player().bank().balancePreview()"></span></div>
-                    <div class="content_display">Income: <span class="content_display-cash" data-bind="text: '$' + Formatter.asCurrency($root.ticker().stockExchange().stockIncomePerMinute()) + ' per minute'"></span>
+            <footer class="stockexchange_footer">
+                <div class="stockexchange_display">
+                    <p class="stockexchange_displayText-multiline">Click on the name of any company to view your stocks for it</p>
+                </div>
+            </footer>
+        </section>
+        <!-- Stock Portfolio (Sell) -->
+        <section class="stockexchange" style="display: none" data-bind="with: ticker().stockExchange(), visible: currentPanel() == 'ViewStocks' && ticker().stockExchange().selectedCompany() !== null">
+            <div class="stockexchange_buttonContainer">
+                <button class="stockexchange_button-link" data-bind="click: function() { selectedCompany(null); }">View All Stocks</button>
+            </div>
+            <div class="stockexchange_row">
+                <div class="stockexchange_displayText">Balance: <span class="stockExchange_displayText-green" data-bind="text: '$' + Formatter.asCurrency($root.player().bank().balance())"></span></div>
+            </div>
+            <div class="stockexchange_row" data-bind="with: selectedCompany">
+                <!-- Company name -->
+                <div class="stockexchange_field">
+                    <h1 class="stockexchange_displayText" data-bind="text: companyName"></h1>
+                </div>
+                <!-- Price per stock -->
+                <div class="stockexchange_field">
+                    <span class="stockexchange_displayText">
+                        Price:
+                        <span class="stockexchange_displayText-green" data-bind="text: pricePerStock"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="stockexchange_row">
+                <!-- Stocks owned -->
+                <div class="stockexchange_field">
+                    <div class="stockexchange_displayText">
+                        Owned:
+                        <span class="stockexchange_displayText-green" data-bind="text: purchasedStockCount()"></span>
                     </div>
                 </div>
-                <div class="stockexchange">
-                    <div class="stockexchange_row content_side-auto">
-                        <button class="stockexchange_button-link" data-bind="click: function() { $parent.selectedCompany(null); }">View All Stocks</button>
-                    </div>
-                    <div class="stockexchange_row">
-                        <div class="stockexchange_field">
-                            <h1 class="stockexchange_title content_align_center"><span data-bind="text: companyName()"></span> <span data-bind="text: '(' + (latestAudit().percentageChange >= 0 ? '+' + latestAudit().percentageChange.toLocaleString() : latestAudit().percentageChange.toLocaleString()) + ')', class: latestAudit().percentageChange >= 0 ? 'stockexchange_company' : 'stockexchange_company-negative'"></span></h1>
-                        </div>
-                        <div class="stockexchange_field">
-                            <div class="stockexchange_title-subtitle">
-                                Owned: <span class="stockexchange_company" data-bind="text: $parent.purchasedStockCount()"></span>
-                            </div>
-                        </div>
-                        <div class="stockexchange_field">
-                            <div class="stockexchange_title-subtitle">
-                                Profit: <span data-bind="text: $parent.playerStockProfit() >= 0 ? '+' + Formatter.asCurrency($parent.playerStockProfit()) + '%' : Formatter.asCurrency($parent.playerStockProfit()) + '%', class: $parent.playerStockProfit() >= 0 ? 'stockexchange_company' : 'stockexchange_company-negative'"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stockexchange_row stockexchange_graph_container">
-                        <!-- Graph Y axis labels -->
-                        <ul class="stockexchange_graph_labels-Y content_side-ten content_align_top" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
-                            <li class="stockexchange_graph_label-Y" data-bind="text: '$' + Formatter.asCurrency($parent.historicValuesAscendingOrder()[$data].pricePerStock), style: { bottom: -8.5 + $data * 10 + '%' }"></li>
+                <!-- Profit -->
+                <div class="stockexchange_field">
+                    <span class="stockexchange_displayText">
+                        Profit: 
+                        <span data-bind="text: playerStockProfit() >= 0 ? '+' + Formatter.asCurrency(playerStockProfit()) + '%' : Formatter.asCurrency(playerStockProfit()) + '%', class: playerStockProfit() >= 0 ? 'stockexchange_displayText-green' : 'stockexchange_displayText-red'"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="stockexchange_graph" data-bind="with: selectedCompany">
+                <!-- Graph Y axis labels -->
+                <ul class="stockexchange_graphLabels-Y" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
+                    <li class="stockexchange_graphLabel-Y" data-bind="text: '$' + Formatter.asCurrency($parent.historicValuesAscendingOrder()[$data].pricePerStock), style: { bottom: -8.5 + $data * 10 + '%' }"></li>
+                </ul>
+                <div class="stockexchange_graph_figureContainer">
+                    <div class="stockexchange_graphTraces">
+                        <!-- Graph X axis trace -->
+                        <ul class="stockexchange_graphTrace" data-bind="foreach: Object.keys(audits())">
+                            <li class="stockexchange_graphTrace-X" data-bind="style: { left: ($data * 10) + '%' }"></li>
                         </ul>
-                        <div class="content_align_center content_side-eighty content_align_top">
-                            <div class="stockexchange_graph">
-                                <!-- Graph X axis trace -->
-                                <ul class="stockexchange_graph_trace" data-bind="foreach: Object.keys(audits())">
-                                    <li class="stockexchange_graph_trace-X" data-bind="style: { left: ($data * 10) + '%' }"></li>
-                                </ul>
-                                <!-- Graph Y axis trace -->
-                                <ul class="stockexchange_graph_trace" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
-                                    <li class="stockexchange_graph_trace-Y" data-bind="style: { bottom: -0.5 + ($data * 10) + '%' }"></li>
-                                </ul>
-                                <!-- Graph line -->
-                                <svg height="100%" width="100%" class="stockexchange_graph_trend stockexchange_graph_trace" preserveAspectRatio="none" viewBox="0 0 100 100" vector-effect="non-scaling-stroke">
-                                    <polyline data-bind="attr: { points: valueHistoryTrend }" />
-                                </svg>
-                                <!-- Graph points (dots) -->
-                                <ul data-bind="foreach: Object.keys(audits())">
-                                    <li class="stockexchange_graph_point" data-bind="style: { bottom: -1 + ($parent.historicValuesAscendingOrder().indexOf($parent.audits()[$data]) * 10) + '%', left: -0.5 + ($data * 10) + '%' }"></li>
-                                </ul>
-                            </div>
-                            <!-- Graph X axis labels -->
-                            <ul class="stockexchange_graph_labels-X" data-bind="foreach: Object.keys(audits())">
-                                <li class="stockexchange_graph_label-X" data-bind="text: $data - $parent.audits().length + 1, style: { left: -1 + $data * 10 + '%' }"></li>
-                            </ul>
-                        </div>
+                        <!-- Graph Y axis trace -->
+                        <ul class="stockexchange_graphTrace" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
+                            <li class="stockexchange_graphTrace-Y" data-bind="style: { bottom: -0.5 + ($data * 10) + '%' }"></li>
+                        </ul>
+                        <!-- Graph line -->
+                        <svg height="100%" width="100%" class="stockexchange_graphTrend stockexchange_graphTrace" preserveAspectRatio="none" viewBox="0 0 100 100" vector-effect="non-scaling-stroke">
+                            <polyline data-bind="attr: { points: valueHistoryTrend }" />
+                        </svg>
+                        <!-- Graph points (dots) -->
+                        <ul data-bind="foreach: Object.keys(audits())">
+                            <li class="stockexchange_graphPoint" data-bind="style: { bottom: -1 + ($parent.historicValuesAscendingOrder().indexOf($parent.audits()[$data]) * 10) + '%', left: -0.5 + ($data * 10) + '%' }"></li>
+                        </ul>
                     </div>
-                    <div class="content_display stockexchange_row">This will <span class="content_display-warning" data-bind="text: 'sell your ' + dividendsDescriptor()"></span> dividends.</div>
-                    <div class="content_side-sixty">
-                        <!-- Cannot sell 1 stock -->
-                        <div style="display: none" data-bind="visible: $parent.purchasedStockCount() === 0">
-                            <div class="stockexchange_row">
-                                <div class="stockexchange_field">
-                                    <label class="stockexchange_label-disabled">
-                                        Amount
-                                        <input class="stockexchange_input-disabled" type="text" value="1" />
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="stockexchange_row">
-                                <div class="stockexchange_field">
-                                    <button class="stockexchange_button">Not enough owned</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Can sell 1 stock -->
-                        <div style="display: none" data-bind="visible: $parent.purchasedStockCount() > 0">
-                            <div class="stockexchange_row">
-                                <div class="stockexchange_field">
-                                    <label class="stockexchange_label">
-                                        Amount
-                                        <input class="stockexchange_input" type="text"
-                                            data-bind="textInput: $parent.stockAmountToBuy" />
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="stockexchange_row">
-                                <div class="stockexchange_field">
-                                    <button data-bind="click: function() { $parent.trySellStocks($root.player().bank()) }, class: $parent.purchasedStockCount() >= $parent.stockAmountToBuy() ? 'stockexchange_button-action-thick' : 'stockexchange_button-thick', text: $parent.purchasedStockCount() >= $parent.stockAmountToBuy() ? 'Sell ($' + Formatter.asCurrency($parent.priceToBuyStock()) + ')' : 'Not enough owned'"></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Graph X axis labels -->
+                    <ul class="stockexchange_graphLabels-X" data-bind="foreach: Object.keys(audits())">
+                        <li class="stockexchange_graphLabel-X" data-bind="text: $data - $parent.audits().length + 1, style: { left: -1 + $data * 10 + '%' }"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="stockexchange_row" data-bind="with: selectedCompany">
+                <p class="stockexchange_displayText-multiline">
+                    This will sell your stock worth <span class="stockexchange_displayText-red" data-bind="text: dividendsDescriptor() + ' dividends'"></span>
+                </p>
+            </div>
+            <div class="stockexchange_row" data-bind="with: selectedCompany">
+                <label data-bind="class: $parent.purchasedStockCount() !== 0 ? 'stockexchange_label' : 'stockexchange_label-disabled'">
+                    Amount
+                    <input data-bind="textInput: $parent.stockAmountToBuy, class: $parent.purchasedStockCount() !== 0 ? 'stockexchange_input' : 'stockexchange_input-disabled'" type="text" value="1" />
+                </label>
+                <div class="stockexchange_buttonContainer">
+                    <button data-bind="class: $parent.purchasedStockCount() >= $parent.stockAmountToBuy() ? 'stockexchange_button' : 'stockexchange_button-disabled', click: function() { $parent.trySellStocks($root.player().bank()) }, text: $parent.purchasedStockCount() >= $parent.stockAmountToBuy() ? 'Sell ($' + Formatter.asCurrency($parent.priceToBuyStock()) + ')' : 'Not enough owned'"></button>
                 </div>
             </div>
         </section>
-        <!-- Stock Exchange -->
-        <section style="display: none" data-bind="with: ticker().stockExchange(), visible: currentPanel() == 'BuyStocks'">
-            <!-- Buy Stocks (View All) -->
-            <div style="display: none" data-bind="visible: selectedCompany() === null">
-                <h1 class="content_title">Buy Stocks</h1>
-                <div class="content_align_left content_side-auto">
-                    <div class="content_display">Balance: <span class="content_display-cash" data-bind="text: $root.player().bank().balancePreview()"></span></div>
-                    <div class="content_display">Income: <span class="content_display-cash" data-bind="text: '$' + Formatter.asCurrency(stockIncomePerMinute()) + ' per minute'"></span>
-                    </div>
-                </div>
-                <ul class="stockexchange" data-bind="foreach: companies">
-                    <li data-bind="class: 'content_fill ' + (latestAudit().percentageChange >= 0 ? 'stockexchange_company' : 'stockexchange_company-negative')">
-                        <div class="stockexchange_company_name" data-bind="text: companyName"></div>
-                        <div class="stockexchange_company_buttoncontainer">
-                            <button class="stockexchange_button-link-noMinWidth content_fill" data-bind="click: function() { $parent.selectedCompany(this) }">Details</button>
+        <!-- Buy Stocks (View All) -->
+        <section class="stockexchange" style="display: none" data-bind="with: ticker().stockExchange(), visible: currentPanel() == 'BuyStocks' && ticker().stockExchange().selectedCompany() === null">
+            <div class="stockexchange_row">
+                <div class="stockexchange_displayText">Balance: <span class="stockExchange_displayText-green" data-bind="text: '$' + Formatter.asCurrency($root.player().bank().balance())"></span></div>
+            </div>
+            <div class="stockexchange_ticker">
+                <ul data-bind="foreach: companies">
+                    <li class="stockexchange_company" data-bind="click: function() { $parent.selectedCompany(this); }">
+                        <div class="stockexchange_companyName" data-bind="text: companyName"></div>
+                        <div class="stockexchange_companyPerformance">
+                            <div data-bind="text: '$' + Formatter.asCurrency(pricePerStock()), class: latestAudit().percentageChange >= 0 ? 'stockexchange_displayText-green' : 'stockexchange_displayText-red'"></div>
                         </div>
-                        <div class="stockexchange_company_performance" data-bind="text: latestAudit().percentageChange >= 0 ? '+' + latestAudit().percentageChange.toLocaleString() : latestAudit().percentageChange.toLocaleString()"></div>
-                        <div class="stockexchange_company_performance" data-bind="text: '$' + Formatter.asCurrency(pricePerStock())"></div>
                     </li>
                 </ul>
             </div>
-            <!-- Buy Stocks (Details) -->
-            <div style="display: none" data-bind="visible: selectedCompany() !== null, with: selectedCompany">
-                <h1 class="content_title">Buy Stocks (Details)</h1>
-                <div class="content_align_left content_side-auto">
-                    <div class="content_display">Balance: <span class="content_display-cash" data-bind="text: $root.player().bank().balancePreview()"></span></div>
-                    <div class="content_display">Income: <span class="content_display-cash" data-bind="text: '$' + Formatter.asCurrency($root.ticker().stockExchange().stockIncomePerMinute()) + ' per minute'"></span>
-                    </div>
+            <footer class="stockexchange_footer">
+                <div class="stockexchange_display">
+                    <p class="stockexchange_displayText-multiline">Click on the name of any company to purchase stocks for it</p>
                 </div>
-                <div class="stockexchange">
-                    <div class="stockexchange_row content_side-auto">
-                        <button class="stockexchange_button-link" data-bind="click: function() { $parent.selectedCompany(null); }">View
-                            All Stocks</button>
-                    </div>
-                    <div class="stockexchange_row">
-                        <div class="stockexchange_field">
-                            <h1 class="stockexchange_title content_align_center"><span data-bind="text: companyName"></span> <span data-bind="text: '(' + (latestAudit().percentageChange >= 0 ? '+' + latestAudit().percentageChange.toLocaleString() : latestAudit().percentageChange.toLocaleString()) + ')', class: latestAudit().percentageChange >= 0 ? 'stockexchange_company' : 'stockexchange_company-negative'"></span>
-                            </h1>
-                        </div>
-                        <div class="stockexchange_field">
-                            <div class="stockexchange_title-subtitle">
-                                Company value: <span class="stockexchange_company" data-bind="text: Formatter.asCurrency(currentValue())"></span>
-                            </div>
-                        </div>
-                        <div class="stockexchange_field">
-                            <div class="stockexchange_title-subtitle">
-                                Owned: <span class="stockexchange_company" data-bind="text: $parent.purchasedStockCount().toLocaleString()"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stockexchange_row stockexchange_graph_container">
-                        <!-- Graph Y axis labels -->
-                        <ul class="stockexchange_graph_labels-Y content_side-ten content_align_top" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
-                            <li class="stockexchange_graph_label-Y" data-bind="text: '$' + Formatter.asCurrency($parent.historicValuesAscendingOrder()[$data].pricePerStock), style: { bottom: -8.5 + $data * 10 + '%' }"></li>
+            </footer>
+        </section>
+        <!-- Buy Stocks (Details) -->
+        <section class="stockexchange" style="display: none" data-bind="with: ticker().stockExchange(), visible: currentPanel() == 'BuyStocks' && ticker().stockExchange().selectedCompany() !== null">
+            <div class="stockexchange_buttonContainer">
+                <button class="stockexchange_button-link" data-bind="click: function() { selectedCompany(null); }">View All Stocks</button>
+            </div>
+            <div class="stockexchange_row">
+                <div class="stockexchange_displayText">Balance: <span class="stockExchange_displayText-green" data-bind="text: '$' + Formatter.asCurrency($root.player().bank().balance())"></span></div>
+            </div>
+            <div class="stockexchange_row" data-bind="with: selectedCompany">
+                <!-- Company name -->
+                <div class="stockexchange_field">
+                    <h1 class="stockexchange_displayText" data-bind="text: companyName"></h1>
+                </div>
+                <!-- Price per stock -->
+                <div class="stockexchange_field">
+                    <span class="stockexchange_displayText">
+                        Price:
+                        <span class="stockexchange_displayText-green" data-bind="text: pricePerStock"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="stockexchange_graph" data-bind="with: selectedCompany">
+                <!-- Graph Y axis labels -->
+                <ul class="stockexchange_graphLabels-Y" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
+                    <li class="stockexchange_graphLabel-Y" data-bind="text: '$' + Formatter.asCurrency($parent.historicValuesAscendingOrder()[$data].pricePerStock), style: { bottom: -8.5 + $data * 10 + '%' }"></li>
+                </ul>
+                <div class="stockexchange_graph_figureContainer">
+                    <div class="stockexchange_graphTraces">
+                        <!-- Graph X axis trace -->
+                        <ul class="stockexchange_graphTrace" data-bind="foreach: Object.keys(audits())">
+                            <li class="stockexchange_graphTrace-X" data-bind="style: { left: ($data * 10) + '%' }"></li>
                         </ul>
-                        <div class="content_align_center content_side-eighty content_align_top">
-                            <div class="stockexchange_graph">
-                                <!-- Graph X axis trace -->
-                                <ul class="stockexchange_graph_trace" data-bind="foreach: Object.keys(audits())">
-                                    <li class="stockexchange_graph_trace-X" data-bind="style: { left: ($data * 10) + '%' }"></li>
-                                </ul>
-                                <!-- Graph Y axis trace -->
-                                <ul class="stockexchange_graph_trace" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
-                                    <li class="stockexchange_graph_trace-Y" data-bind="style: { bottom: -0.5 + ($data * 10) + '%' }"></li>
-                                </ul>
-                                <!-- Graph line -->
-                                <svg height="100%" width="100%" class="stockexchange_graph_trend stockexchange_graph_trace" preserveAspectRatio="none" viewBox="0 0 100 100" vector-effect="non-scaling-stroke">
-                                    <polyline data-bind="attr: { points: valueHistoryTrend }" />
-                                </svg>
-                                <!-- Graph points (dots) -->
-                                <ul data-bind="foreach: Object.keys(audits())">
-                                    <li class="stockexchange_graph_point" data-bind="style: { bottom: -1 + ($parent.historicValuesAscendingOrder().indexOf($parent.audits()[$data]) * 10) + '%', left: -0.5 + ($data * 10) + '%' }"></li>
-                                </ul>
-                            </div>
-                            <!-- Graph X axis labels -->
-                            <ul class="stockexchange_graph_labels-X" data-bind="foreach: Object.keys(audits())">
-                                <li class="stockexchange_graph_label-X" data-bind="text: $data - $parent.audits().length + 1, style: { left: -1 + $data * 10 + '%' }"></li>
-                            </ul>
-                        </div>
+                        <!-- Graph Y axis trace -->
+                        <ul class="stockexchange_graphTrace" data-bind="foreach: Object.keys(historicValuesAscendingOrder())">
+                            <li class="stockexchange_graphTrace-Y" data-bind="style: { bottom: -0.5 + ($data * 10) + '%' }"></li>
+                        </ul>
+                        <!-- Graph line -->
+                        <svg height="100%" width="100%" class="stockexchange_graphTrend stockexchange_graphTrace" preserveAspectRatio="none" viewBox="0 0 100 100" vector-effect="non-scaling-stroke">
+                            <polyline data-bind="attr: { points: valueHistoryTrend }" />
+                        </svg>
+                        <!-- Graph points (dots) -->
+                        <ul data-bind="foreach: Object.keys(audits())">
+                            <li class="stockexchange_graphPoint" data-bind="style: { bottom: -1 + ($parent.historicValuesAscendingOrder().indexOf($parent.audits()[$data]) * 10) + '%', left: -0.5 + ($data * 10) + '%' }"></li>
+                        </ul>
                     </div>
-                    <div class="content_display stockexchange_row">This company offers <span class="content_display-cash" data-bind="text: dividendsDescriptor"></span> dividends.</div>
-                    <div class="content_side-sixty">
-                        <!-- Cannot afford 1 stock -->
-                        <div style="display: none" data-bind="visible: $root.player().bank().balance() < pricePerStock()">
-                            <div class="stockexchange_field">
-                                <label class="stockexchange_label-disabled">
-                                    Amount
-                                    <input disabled="disabled" class="stockexchange_input-disabled" type="text" value="1" />
-                                </label>
-                            </div>
-                            <div class="stockexchange_field">
-                                <button class="stockexchange_button" data-bind="text: 'Cannot afford ($' + Formatter.asCurrency(pricePerStock()) + ')'"></button>
-                            </div>
-                        </div>
-                        <!-- Can afford 1 stock -->
-                        <div style="display: none" data-bind="visible: $root.player().bank().balance() >= pricePerStock()">
-                            <div class="stockexchange_field">
-                                <label class="stockexchange_label">
-                                    Amount
-                                    <input class="stockexchange_input" type="text" data-bind="textInput: $parent.stockAmountToBuy" />
-                                </label>
-                            </div>
-                            <div class="stockexchange_field">
-                                <button data-bind="click: function() { $parent.tryPurchaseStocks($root.player().bank()) }, class: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'stockexchange_button-action' : 'stockexchange_button', text: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'Purchase ($' + Formatter.asCurrency($parent.priceToBuyStock()) + ')' : 'Cannot afford ($' + Formatter.asCurrency($parent.priceToBuyStock()) + ')'"></button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Graph X axis labels -->
+                    <ul class="stockexchange_graphLabels-X" data-bind="foreach: Object.keys(audits())">
+                        <li class="stockexchange_graphLabel-X" data-bind="text: $data - $parent.audits().length + 1, style: { left: -1 + $data * 10 + '%' }"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="stockexchange_row" data-bind="with: selectedCompany">
+                <p class="stockexchange_displayText-multiline">
+                    This company offers <span class="stockexchange_displayText-green" data-bind="text: dividendsDescriptor() + ' dividends'"></span>
+                </p>
+            </div>
+            <div class="stockexchange_row" data-bind="with: selectedCompany">
+                <label data-bind="class: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'stockexchange_label' : 'stockexchange_label-disabled'">
+                    Amount
+                    <input data-bind="textInput: $parent.stockAmountToBuy, class: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'stockexchange_input' : 'stockexchange_input-disabled'" type="text" value="1" />
+                </label>
+                <div class="stockexchange_buttonContainer">
+                    <button data-bind="class: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'stockexchange_button' : 'stockexchange_button-disabled', click: function() { $parent.tryPurchaseStocks($root.player().bank()) }, text: $root.player().bank().balance() >= $parent.priceToBuyStock() ? 'Purchase ($' + Formatter.asCurrency($parent.priceToBuyStock()) + ')' : 'Cannot afford ($' + Formatter.asCurrency($parent.priceToBuyStock()) + ')'"></button>
                 </div>
             </div>
         </section>
     </main>
     <script async="async" src="./core/scripts/common/polyfill.js"></script>
-    <script async="async" src="./core/scripts/common/knockout.js"></script>
-    <script async="async" src="./core/scripts/common/formatter.js"></script>
-    <script async="async" src="./core/scripts/common/maths-library.js"></script>
-    <script async="async" src="./core/scripts/common/game-config.js"></script>
-    <script async="async" src="./core/scripts/companies/stock-exchange.js"></script>
-    <script async="async" src="./core/scripts/companies/company.js"></script>
-    <script async="async" src="./core/scripts/companies/ticker.js"></script>
-    <script async="async" src="./core/scripts/money/bank.js"></script>
-    <script async="async" src="./core/scripts/money/money-generator.js"></script>
-    <script async="async" src="./core/scripts/player/player.js"></script>
-    <script async="async" src="./core/scripts/game.js"></script>
-    <script async="async" src="./core/scripts/persistent-storage.js"></script>
+    <script async="async" src="./core/scripts/common/Formatter.js"></script>
+    <script async="async" src="./core/scripts/bundle.js"></script>
 </body>
-
 </html>

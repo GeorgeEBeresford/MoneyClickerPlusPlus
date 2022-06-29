@@ -2,12 +2,25 @@
 
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     color: #aaa;
-    font-size: 1rem;
+    font-size: 4em;
     background: url("../../core/images/background.jpg") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    
+    // Disable double-tap to zoom as it breaks features such as click-to-generate-money button
+    touch-action: manipulation;
+}
+
+.content_main {
+
+    display: block;
+    width: 100%;
+    border-left: 0;
+    box-sizing: border-box;
+    text-align: center;
+    opacity: 0.98;
 }
 
 .content_display {
@@ -143,23 +156,6 @@
     vertical-align: bottom;
 }
 
-.content_main {
-
-    display: block;
-    width: 70%;
-    border-left: 0;
-    box-sizing: border-box;
-    text-align: center;
-    opacity: 0.98;
-    float: left;
-
-    &:after {
-        content: "";
-        display: table;
-        clear: both;
-    }
-}
-
 .content_main_background {
     
     position: fixed;
@@ -173,19 +169,12 @@
 .content_sidebar {
 
     display: block;
-    width: 30%;
+    width: 100%;
     box-sizing: border-box;
     text-align: left;
     opacity: 0.98;
     background-color: #222;
     background-color: rgba(#222, 0.8);
-    float: left;
-
-    &:after {
-        content: "";
-        display: table;
-        clear: both;
-    }
 }
 
 .content_footer {
@@ -207,17 +196,4 @@
 .content_hidden {
 
     display: none;
-}
-
-@media only screen and (max-width: 730px) {
-
-    .content_main {
-
-        width: 100%;
-    }
-
-    .content_sidebar {
-
-        width: 100%;
-    }
 }

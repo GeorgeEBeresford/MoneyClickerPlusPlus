@@ -1,9 +1,11 @@
-"use strict";
+import * as ko from "../common/knockout";
+import Company from "./company";
+import gameConfig from "../common/game-config";
+import MathsLibrary from "../common/maths-library";
 /**
  * An object that allows the viewing, purchasing and selling of stocks for different companies
- * @class
  */
-class StockExchange {
+export default class StockExchange {
     /**
      * Creates a new StockExchange
      * @param player - A reference to the current player so we can track their owned stock // Todo - refactor this out of the Player object and into the StockExchange object

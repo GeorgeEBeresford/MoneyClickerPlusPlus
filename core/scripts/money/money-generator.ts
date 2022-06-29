@@ -1,54 +1,43 @@
-/**
- * Represents a MoneyGenerator that has been saved as JSON
- */
-interface ISavableMoneyGenerator{
-
-    baseCashPerClick: number;
-    boostExpires: string;
-}
+import * as ko from "../common/knockout";
+import ISavableMoneyGenerator from "../types/ISavableMoneyGenerator";
+import Bank from "./bank";
+import MathsLibrary from "../common/maths-library";
 
 /**
  * An object that can be used to generate money for the player from thin air
  */
-class MoneyGenerator {
-
-    /**
-     * A reference to the current player
-     */
-    private readonly bank: ko.Observable<Bank>;
+export default class MoneyGenerator {
 
     /**
      * The amount of money that the player will receive without boosts
      */
-    private readonly baseCashPerClick: ko.Observable<number>;
+    public readonly baseCashPerClick: ko.Observable<number>;
 
     /**
      * The time and date of when the money generator boost runs out
      */
-    private readonly boostExpires: ko.Observable<Date>;
+    public readonly boostExpires: ko.Observable<Date>;
 
     /**
      * Calculates the number of seconds between the current date and time, and the time and date that the boost expires
      */
-    private readonly boostedSecondsRemaining: ko.Computed<number>;
+    public readonly boostedSecondsRemaining: ko.Computed<number>;
 
     /**
      * Calculates the cost of upgrading the money generator
      */
-    private readonly upgradeCost: ko.Computed<number>;
+    public readonly upgradeCost: ko.Computed<number>;
 
     /**
      * Calculates how much money is generated for each click
      */
-    private readonly cashPerClick: ko.Computed<number>;
+    public readonly cashPerClick: ko.Computed<number>;
 
     /**
      * Creates a new MoneyGenerator
-     * @param player - The player which the MoneyGenerator should create money for
      */
-    constructor(bank: Bank){
+    constructor(){
 
-        this.bank = ko.observable(bank);
         this.baseCashPerClick = ko.observable(1);
         this.boostExpires = ko.observable(new Date(0));
     
@@ -91,9 +80,9 @@ class MoneyGenerator {
      * @param bank - A reference to the bank which any money will be deposited into
      * @returns the restored MoneyGenerator
      */
-    public static restore(savedMoneyGenerator: ISavableMoneyGenerator | null, bank: Bank): MoneyGenerator {
+    public static restore(savedMoneyGenerator: ISavableMoneyGenerator | null): MoneyGenerator {
 
-        var moneyGenerator = new MoneyGenerator(bank);
+        var moneyGenerator = new MoneyGenerator();
 
         if (savedMoneyGenerator !== null){
 
@@ -133,15 +122,16 @@ class MoneyGenerator {
     /**
      * Doubles the output of the boost generator for a limited number of seconds
      * @param seconds - The number of seconds to boost the generator for
+     * @param bank - The bank which we'll withdraw the funds for the boost from
+     * @returns whether the player could afford to boost the generator
      */
-    public boostGenerator(seconds: number): void {
+    public boostGenerator(seconds: number, bank: Bank): boolean {
 
-        const bank = this.bank();
         var isWithdrawalSuccess = bank.tryWithdraw(this.getBoostCost(seconds));
 
         if (!isWithdrawalSuccess) {
 
-            return;
+            return false;
         }
 
         var now = new Date();
@@ -152,33 +142,38 @@ class MoneyGenerator {
         );
 
         this.boostExpires(newExpiration);
+
+        return true;
     }
 
     /**
      * Generates money out of thin air for the player
+     * @param bank - The bank which we'll deposit the generated funds into
      */
-    public generateCash(): void {
+    public generateCash(bank: Bank): void {
 
-        const bank = this.bank();
         bank.deposit(this.cashPerClick())
     }
 
     /**
      * Upgrades the money generator to give 1 more currency per click
+     * @param bank - The bank which we'll withdraw the funds for the boost from
+     * @returns whether the player could afford to upgrade the generator
      */
-    public upgradeGenerator(): void {
+    public upgradeGenerator(bank: Bank): boolean {
 
-        const bank = this.bank();
         const upgradeCost = this.upgradeCost();
 
         var isWithdrawalSuccess = bank.tryWithdraw(upgradeCost);
 
         if (!isWithdrawalSuccess) {
 
-            return;
+            return false;
         }
 
         this.baseCashPerClick(this.baseCashPerClick() + 1);
+
+        return true;
     }
 
     /**

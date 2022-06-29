@@ -1,8 +1,9 @@
-"use strict";
+import * as ko from "../common/knockout";
+import StockExchange from "./stock-exchange";
 /**
  * An object that monitors the different companies and provides statistics for how well each company is doing
  */
-class Ticker {
+export default class Ticker {
     /**
      * Creates a new Ticker
      * @param stockExchange - The stock exchange which we'll use to keep track of stocks and stock values
